@@ -1,0 +1,46 @@
+1. Projektziel und Anwendungsbereich
+Was genau ist das Ziel des Projekts?
+
+Für wen ist die Anwendung gedacht (z.B. Diabetiker, Sportler, Menschen mit bestimmten Allergien)?
+
+Welche spezifischen diätetischen Anforderungen sollen abgedeckt werden?
+
+2. Funktionsumfang und Anforderungen
+Welche Funktionen soll die Anwendung bieten (z.B. Nährwertberechnung, Rezeptvorschläge, Lebensmitteldatenbank)?
+
+Wie detailliert soll die Nährwertberechnung sein (Makronährstoffe, Mikronährstoffe)?
+
+Welche Rohstoffe sollen berücksichtigt werden (z.B. regionale, saisonale, biologische Produkte)?
+
+3. Datenquellen und Datenverarbeitung
+Welche Datenquellen sollen für die Nährwertinformationen und Rohstoffauswahl verwendet werden?
+
+Wie werden die Daten erfasst, verarbeitet und in der Anwendung dargestellt?
+
+Gibt es spezielle Anforderungen an die Genauigkeit und Aktualität der Daten?
+
+4. Benutzeroberfläche und Benutzererfahrung
+Wie soll die Benutzeroberfläche gestaltet sein (z.B. intuitiv, benutzerfreundlich)?
+
+Welche Interaktionsmöglichkeiten sollen den Nutzern geboten werden (z.B. Suche, Filter, Favoriten)?
+
+Soll die Anwendung auf verschiedenen Plattformen verfügbar sein (z.B. Web, Mobile)?
+
+5. Technische Umsetzung und Architektur
+Welche Programmiersprachen und Frameworks sollen verwendet werden?
+
+Wie soll die Architektur der Anwendung aussehen (z.B. Client-Server-Modell, Microservices)?
+
+Welche Technologien und Tools werden für die Entwicklung und das Testing benötigt?
+
+6. Datenschutz und Sicherheit
+Wie wird der Datenschutz der Benutzer gewährleistet?
+
+Welche Sicherheitsmaßnahmen müssen getroffen werden, um sensible Daten zu schützen?
+
+7. Projektmanagement und Teamarbeit
+Wie wird die Aufgabenverteilung im Team organisiert?
+
+Welche Tools und Methoden werden für die Zusammenarbeit und das Projektmanagement verwendet (z.B. GitHub, ZenHub, Agile Methoden)?
+
+Wie wird der Fortschritt dokumentiert und präsentiert?
