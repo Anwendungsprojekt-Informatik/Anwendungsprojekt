@@ -1,0 +1,44 @@
+- Vorbereitung erster Termin
+    - 30min
+    - 14.01.2025 Dienstag
+    - Teilnehmende: alle
+- erste einrichtung github/zenhub
+    - 2h
+    - 15.01.2025 Mittwoch
+    - Teilnehmende: DS
+- Auftragabnahme
+    - 15min
+    - 20.01.2025
+    - Teilnehmende: alle
+- Zieldefinition / Zielklärung
+    - 60min
+    - 21.01.2025
+    - Teilnehmende: alle
+- Zieldefinition / Zielklärung
+    - 60min
+    - 24.01.2025
+    - Teilnehmende: alle
+- PSP:
+    - 2h
+    - 01.02.2025
+    - Teilnehmende: alle
+- Zeitplan:
+    - 2h
+    - 04.02.2025
+    - Teilnehmende: alle
+- PSP Grafik erstellen
+    - 1h
+    - 05.02.2025
+    - Teilnehmende: DS
+- Netzplan
+    - 5h
+    - 06.05.2025
+    - Teilnehmende: MG
+- Ressourcenplan
+    - 1h
+    - 10.02.2025
+    - Teilnehmende: LK
+- Verantwortlichkeiten + Personenstundenplanung
+    - 2h
+    - 11.02.2025
+    - Teilnehmende: Alle
