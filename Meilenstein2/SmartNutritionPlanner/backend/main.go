@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/Anwendungsprojekt-Informatik/Anwendungsprojekt/Meilenstein2/SmartNutritionPlanner/backend/api"
+	"github.com/Anwendungsprojekt-Informatik/Anwendungsprojekt/api"
 	"github.com/gin-gonic/gin"
 )
 
