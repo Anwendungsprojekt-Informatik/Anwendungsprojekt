@@ -25,6 +25,11 @@ type Product struct {
 	Quantity        string `json:"quantity"`
 }
 
+// Product Nährwerte
+type Nutriment struct {
+	Calories string `json:"nutriments.energy-kcal_100g"`
+}
+
 // SearchResponse repräsentiert die Antwort der OpenFoodFacts API bei einer Suche
 type SearchResponse struct {
 	Count    int       `json:"count"`
@@ -52,8 +57,9 @@ func (c *OpenFoodFactClient) GetProductByBarcode(barcode string) (*Product, erro
 	defer resp.Body.Close()
 
 	var result struct {
-		Product Product `json:"product"`
-		Status  int     `json:"status"`
+		Product   Product   `json:"product"`
+		Nutriment Nutriment `json:"nutriment"`
+		Status    int       `json:"status"`
 	}
 
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
