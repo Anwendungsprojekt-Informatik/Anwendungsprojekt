@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 )
 
 // OpenFoodFactClient repräsentiert einen Client für die OpenFoodFacts API
@@ -15,19 +16,15 @@ type OpenFoodFactClient struct {
 
 // Product repräsentiert ein Lebensmittelprodukt aus der OpenFoodFacts API
 type Product struct {
-	ID              string `json:"id"`
-	Code            string `json:"code"`
-	ProductName     string `json:"product_name"`
-	Brands          string `json:"brands"`
-	ImageURL        string `json:"image_url"`
-	Ingredients     string `json:"ingredients_text"`
-	NutritionGrades string `json:"nutrition_grades"`
-	Quantity        string `json:"quantity"`
-}
-
-// Product Nährwerte
-type Nutriment struct {
-	Calories string `json:"nutriments.energy-kcal_100g"`
+	ID              string                     `json:"id"`
+	Code            string                     `json:"code"`
+	ProductName     string                     `json:"product_name"`
+	Brands          string                     `json:"brands"`
+	ImageURL        string                     `json:"image_url"`
+	Ingredients     string                     `json:"ingredients_text"`
+	NutritionGrades string                     `json:"nutrition_grades"`
+	Quantity        string                     `json:"quantity"`
+	Nutriments      map[string]json.RawMessage `json:"nutriments"`
 }
 
 // SearchResponse repräsentiert die Antwort der OpenFoodFacts API bei einer Suche
@@ -41,7 +38,7 @@ type SearchResponse struct {
 // NewOpenFoodFactClient erstellt einen neuen OpenFoodFacts API Client
 func NewOpenFoodFactClient() *OpenFoodFactClient {
 	return &OpenFoodFactClient{
-		BaseURL:    "https://world.openfoodfacts.org/api/v0",
+		BaseURL:    "https://world.openfoodfacts.org/api/v2",
 		HTTPClient: &http.Client{},
 	}
 }
@@ -57,9 +54,8 @@ func (c *OpenFoodFactClient) GetProductByBarcode(barcode string) (*Product, erro
 	defer resp.Body.Close()
 
 	var result struct {
-		Product   Product   `json:"product"`
-		Nutriment Nutriment `json:"nutriment"`
-		Status    int       `json:"status"`
+		Product Product `json:"product"`
+		Status  int     `json:"status"`
 	}
 
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
@@ -101,4 +97,21 @@ func (c *OpenFoodFactClient) SearchProducts(query string, page int) (*SearchResp
 	}
 
 	return &result, nil
+}
+
+// Hilfsfunktion: Wert als Float64 extrahieren
+func getFloatValue(data map[string]json.RawMessage, key string) float64 {
+	if value, ok := data[key]; ok {
+		var floatValue float64
+		if err := json.Unmarshal(value, &floatValue); err == nil {
+			return floatValue // Fall: Float64
+		}
+		var stringValue string
+		if err := json.Unmarshal(value, &stringValue); err == nil {
+			if parsed, err := strconv.ParseFloat(stringValue, 64); err == nil {
+				return parsed // Fall: String, aber in Float konvertierbar
+			}
+		}
+	}
+	return 0 // Falls kein Wert gefunden wird
 }
