@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Handy-Vorschau</title>
+  <title>Tagesübersicht</title>
   <style>
     * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
     }
 
     body {
-      background-color: #e0e0e0;
+      background-color: #e5e5e5;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -21,16 +21,16 @@
     }
 
     .phone-frame {
-      width: 390px; /* iPhone 14 Breite */
-      height: 844px; /* iPhone 14 Höhe */
+      width: 390px;
+      height: 844px;
       background-color: #ffffff;
-      border: 16px solid #000000;
       border-radius: 40px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
       overflow: hidden;
+      box-shadow: 0 0 20px rgba(0,0,0,0.15);
+      border: 12px solid #000;
+      position: relative;
       display: flex;
       flex-direction: column;
-      position: relative;
     }
 
     .phone-notch {
@@ -46,35 +46,139 @@
     }
 
     .phone-content {
+      margin-top: 40px;
       padding: 20px;
-      margin-top: 40px; /* Platz für Notch */
-      overflow-y: auto;
       flex: 1;
+      overflow-y: auto;
     }
-    #menue-icon {
-      width: 50px;
-      height: 50px;
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
     }
-    #konto-icon {
-      margin-left: 200px;
-      width: 50px;
-      height: 50px;
+
+    .header img {
+      width: 30px;
+      height: 30px;
     }
-    #Kalorienmeter {
-      margin-top: 50px;
-      margin-left: 100px;
+
+    h2 {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 20px;
     }
-    #Nähwerte {
-      margin-top: 250px;
-      margin-left: 100px;
+
+    .circle-chart {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: conic-gradient(
+        green 0deg 200deg,
+        blue 200deg 290deg,
+        red 290deg 360deg
+      );
+      margin: 0 auto;
+      position: relative;
     }
-    #add-icon {
-      width: 50px;
-      margin-top: 150px;
-      margin-left: 140px;
+
+    .circle-chart::after {
+      content: '';
+      position: absolute;
+      width: 130px;
+      height: 130px;
+      background: white;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
+
+    .circle-text {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 18px;
+      color: #333;
+    }
+
+    .circle-text strong {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .bars-container {
+      margin-top: 40px;
+      width: 90%;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .bar {
+      margin-bottom: 20px;
+    }
+
+    .bar-label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .bar-track {
+      height: 20px;
+      border-radius: 10px;
+      background: #eee;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      text-align: right;
+      color: white;
+      font-size: 12px;
+      padding-right: 5px;
+      line-height: 20px;
+    }
+
+    .bar-fill.fat {
+      width: 57%;
+      background-color: red;
+    }
+
+    .bar-fill.carbs {
+      width: 80%;
+      background-color: blue;
+    }
+
+    .bar-fill.protein {
+      width: 33%;
+      background-color: green;
+    }
+
+    .add-section {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .add-icon {
+      font-size: 40px;
+      color: #333;
+      display: inline-block;
+      transition: transform 0.2s ease;
+    }
+
+    .add-icon:hover {
+      transform: scale(1.1);
+    }
+
     #add-article {
-      margin-left: 105px;
+      font-size: 14px;
+      color: #333;
     }
   </style>
 </head>
@@ -82,20 +186,51 @@
 
 <div class="phone-frame">
   <div class="phone-notch"></div>
+
   <div class="phone-content">
     <div class="header">
-      <a href="Menue.html"> <img id="menue-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/640px-Hamburger_icon.svg.png" alt="Menü-Icon"></a>
-      <a href="User.html"> <img id="konto-icon" src="https://cdn-icons-png.flaticon.com/512/2354/2354573.png" alt="konto-Icon"></a>
+      <a href="Menue.html"><img src="https://cdn-icons-png.flaticon.com/512/1828/1828859.png" alt="Menü Icon"></a>
+      <a href="User.html"><img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="User Icon"></a>
     </div>
 
-    <center><h2>Tages Übersicht</h2></center>
-    <img id="Kalorienmeter" src="Kalorienmeter.png" alt="Kalorienmeter">
-    <br>
-    <img id="Nähwerte" src="Kolen.png" alt="Nähwerte Übersicht">
-  <br>
-    <div>
-    <a href="AddArticle.html"><img id="add-icon" src="https://cdn-icons-png.flaticon.com/512/2661/2661440.png" alt="addIcon"></a>
-    <p id="add-article">Artikel hinzufügen</p>
+    <h2>Tages Übersicht</h2>
+
+    <!-- Kreisdiagramm für Kalorien -->
+    <div class="circle-chart">
+      <div class="circle-text">
+        <strong>1300 Kcal</strong><br>
+        <small>von 2300 Kcal</small>
+      </div>
+    </div>
+
+    <!-- Makronährstoff-Balken -->
+    <div class="bars-container">
+      <div class="bar">
+        <div class="bar-label"><span>Fette</span><span>20g / 35g</span></div>
+        <div class="bar-track">
+          <div class="bar-fill fat">57%</div>
+        </div>
+      </div>
+
+      <div class="bar">
+        <div class="bar-label"><span>Kohlenhydrate</span><span>80g / 100g</span></div>
+        <div class="bar-track">
+          <div class="bar-fill carbs">80%</div>
+        </div>
+      </div>
+
+      <div class="bar">
+        <div class="bar-label"><span>Proteine</span><span>25g / 75g</span></div>
+        <div class="bar-track">
+          <div class="bar-fill protein">33%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Artikel hinzufügen -->
+    <div class="add-section">
+      <a href="AddArticle.html"> <div class="add-icon">+</div></a>
+      <p id="add-article">Artikel hinzufügen</p>
     </div>
   </div>
 </div>

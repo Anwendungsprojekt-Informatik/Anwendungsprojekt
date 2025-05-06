@@ -4,12 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Handy-Vorschau</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
     }
 
     body {
@@ -57,11 +58,14 @@
       align-items: center;
       background-color: #f1f1f1;
       border-radius: 25px;
-      padding: 5px 10px;
-      margin-bottom: 20px;
-      gap: 10px;
+      padding: 10px 15px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
+    .material-icons {
+      color: #777;
+    }
 
     .search-input {
       border: none;
@@ -69,19 +73,60 @@
       outline: none;
       flex: 1;
       font-size: 16px;
+      margin-left: 10px;
     }
+
     #barcode-icon {
-      width: 35px;
-      height: 35px;
+      width: 28px;
+      height: 28px;
+      margin-left: 10px;
     }
-    #Home-icon{
-      margin-bottom: 70px;
-      margin-left: 160px;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+      background-color: #f9f9f9;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      text-align: center;
+      padding: 12px 10px;
+    }
+
+    th {
+      background-color: #d6e6ff;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f1f6ff;
+    }
+
+    .Rezeptvorschlag {
+      background-color: #f0f8ff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .Rezeptvorschlag li {
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    #Home-icon {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
       width: 50px;
       height: 50px;
     }
   </style>
-
 </head>
 <body>
 
@@ -89,50 +134,42 @@
   <div class="phone-notch"></div>
   <div class="phone-content">
     <div class="search-bar-container">
-      <i class="fas fa-search search-icon"></i>
+      <span class="material-icons">search</span>
       <input type="text" class="search-input" placeholder="Suche...">
-      <a href="#"> <img id="barcode-icon" src="https://images.vexels.com/content/157862/preview/barcode-scanning-icon-1c9119.png"> </a>
+      <a href="#"><img id="barcode-icon" src="https://images.vexels.com/content/157862/preview/barcode-scanning-icon-1c9119.png" alt="Barcode-Scan"></a>
     </div>
-    <div class="tableinfo">
-      <table border="dotted">
-      <th >Produkt</th>
-      <th >Proteine / 100g</th>
-      <th>Kcal / 100g</th>
-        <tr>
-          <td>
-            <center>Nutella</center>
-          </td>
-          <td>
-            <center>6,3 g</center>
-          </td>
-          <td>
-            <center>539 kcal</center>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <center>Gouda Käse</center>
-          </td>
-          <td>
-            <center>25 g</center>
-          </td>
-          <td>
-            <center>356 kcal</center>
-          </td>
-        </tr>
-      </table>
+
+    <table>
+      <thead>
+      <tr>
+        <th>Produkt</th>
+        <th>Proteine / 100g</th>
+        <th>Kcal / 100g</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>Nutella</td>
+        <td>6,3 g</td>
+        <td>539 kcal</td>
+      </tr>
+      <tr>
+        <td>Gouda Käse</td>
+        <td>25 g</td>
+        <td>356 kcal</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div class="Rezeptvorschlag">
+      <ul>
+        <li>🥣 Frühstücksquark Rezept</li>
+        <li>🍕 High Protein Pizza Rezept</li>
+      </ul>
     </div>
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-    <center><div class="Rezeptvorschlag">
-      <table border="dotted">
-        <th> <li>Frühstücksquark Rezept</li>
-          <li>High Protein Pizza Rezept</li>
-        </th>
-      </table>
-    </div>
-    </center>
   </div>
-  <a href="Home.html"><img id="Home-icon" src="https://cdn-icons-png.flaticon.com/512/1946/1946488.png" alt="Home-icon"></a>
+
+  <a href="Home.html"><img id="Home-icon" src="https://cdn-icons-png.flaticon.com/512/1946/1946488.png" alt="Home"></a>
 </div>
 
 </body>
