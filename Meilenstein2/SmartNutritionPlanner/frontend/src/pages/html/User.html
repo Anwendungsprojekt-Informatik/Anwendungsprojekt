@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Handy-Vorschau</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-color: #e0e0e0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .phone-frame {
+      width: 390px; /* iPhone 14 Breite */
+      height: 844px; /* iPhone 14 Höhe */
+      background-color: #ffffff;
+      border: 16px solid #000000;
+      border-radius: 40px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .phone-notch {
+      width: 120px;
+      height: 30px;
+      background-color: #000;
+      border-radius: 0 0 20px 20px;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+    }
+
+    .phone-content {
+      padding: 20px;
+      margin-top: 40px; /* Platz für Notch */
+      overflow-y: auto;
+      flex: 1;
+    }
+  #konto-icon{
+    margin-left: 125px;
+    width: 75px;
+    height: 75px;
+  }
+    #bearbeiten-icon {
+      width: 35px;
+      height: 35px;
+      margin-left: 50px;
+      margin-bottom: 25px;
+    }
+    #Home-icon {
+      margin-top: 250px;
+      margin-left: 140px;
+      width: 50px;
+      height: 50px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="phone-notch"></div>
+  <div class="phone-content">
+    <img id="konto-icon" src="https://cdn-icons-png.flaticon.com/512/2354/2354573.png" alt="konto-Icon">
+    <img id="bearbeiten-icon" src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" alt="bearbeiten-Icon">
+    <center><h1>Name: User Name</h1></center>
+    <br>
+
+    <div class="user-content">
+      <p>Gewicht: <input></input></p>
+      <br>
+      <p>Geschlecht: <input></input></p>
+      <br>
+      <p>Alter: <input></input></p>
+      <br>
+      <p>Größe: <input></input></p>
+      <br>
+      <p>Kcal Ziel: <input></input></p>
+      <br>
+      <p>Ernährungsart: <input></input></p>
+      </div>
+
+    <a href="Home.html"><img id="Home-icon" src="https://cdn-icons-png.flaticon.com/512/1946/1946488.png" alt="Home-icon"></a>
+</div>
+
+</body>
+</html>

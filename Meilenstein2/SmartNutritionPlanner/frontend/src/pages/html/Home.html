@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Handy-Vorschau</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-color: #e0e0e0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .phone-frame {
+      width: 390px; /* iPhone 14 Breite */
+      height: 844px; /* iPhone 14 Höhe */
+      background-color: #ffffff;
+      border: 16px solid #000000;
+      border-radius: 40px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .phone-notch {
+      width: 120px;
+      height: 30px;
+      background-color: #000;
+      border-radius: 0 0 20px 20px;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+    }
+
+    .phone-content {
+      padding: 20px;
+      margin-top: 40px; /* Platz für Notch */
+      overflow-y: auto;
+      flex: 1;
+    }
+    #menue-icon {
+      width: 50px;
+      height: 50px;
+    }
+    #konto-icon {
+      margin-left: 200px;
+      width: 50px;
+      height: 50px;
+    }
+    #Kalorienmeter {
+      margin-top: 50px;
+      margin-left: 100px;
+    }
+    #Nähwerte {
+      margin-top: 250px;
+      margin-left: 100px;
+    }
+    #add-icon {
+      width: 50px;
+      margin-top: 150px;
+      margin-left: 140px;
+    }
+    #add-article {
+      margin-left: 105px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="phone-notch"></div>
+  <div class="phone-content">
+    <div class="header">
+      <a href="Menue.html"> <img id="menue-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/640px-Hamburger_icon.svg.png" alt="Menü-Icon"></a>
+      <a href="User.html"> <img id="konto-icon" src="https://cdn-icons-png.flaticon.com/512/2354/2354573.png" alt="konto-Icon"></a>
+    </div>
+
+    <center><h2>Tages Übersicht</h2></center>
+    <img id="Kalorienmeter" src="Kalorienmeter.png" alt="Kalorienmeter">
+    <br>
+    <img id="Nähwerte" src="Kolen.png" alt="Nähwerte Übersicht">
+  <br>
+    <div>
+    <a href="AddArticle.html"><img id="add-icon" src="https://cdn-icons-png.flaticon.com/512/2661/2661440.png" alt="addIcon"></a>
+    <p id="add-article">Artikel hinzufügen</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

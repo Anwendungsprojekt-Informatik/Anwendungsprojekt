@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Handy-Vorschau</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-color: #e0e0e0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .phone-frame {
+      width: 390px;
+      height: 844px;
+      background-color: #ffffff;
+      border: 16px solid #000000;
+      border-radius: 40px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .phone-notch {
+      width: 120px;
+      height: 30px;
+      background-color: #000;
+      border-radius: 0 0 20px 20px;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+    }
+
+    .phone-content {
+      padding: 20px;
+      margin-top: 40px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .search-bar-container {
+      display: flex;
+      align-items: center;
+      background-color: #f1f1f1;
+      border-radius: 25px;
+      padding: 5px 10px;
+      margin-bottom: 20px;
+      gap: 10px;
+    }
+
+
+    .search-input {
+      border: none;
+      background: transparent;
+      outline: none;
+      flex: 1;
+      font-size: 16px;
+    }
+    #barcode-icon {
+      width: 35px;
+      height: 35px;
+    }
+    #Home-icon{
+      margin-bottom: 70px;
+      margin-left: 160px;
+      width: 50px;
+      height: 50px;
+    }
+  </style>
+
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="phone-notch"></div>
+  <div class="phone-content">
+    <div class="search-bar-container">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" class="search-input" placeholder="Suche...">
+      <a href="#"> <img id="barcode-icon" src="https://images.vexels.com/content/157862/preview/barcode-scanning-icon-1c9119.png"> </a>
+    </div>
+    <div class="tableinfo">
+      <table border="dotted">
+      <th >Produkt</th>
+      <th >Proteine / 100g</th>
+      <th>Kcal / 100g</th>
+        <tr>
+          <td>
+            <center>Nutella</center>
+          </td>
+          <td>
+            <center>6,3 g</center>
+          </td>
+          <td>
+            <center>539 kcal</center>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <center>Gouda Käse</center>
+          </td>
+          <td>
+            <center>25 g</center>
+          </td>
+          <td>
+            <center>356 kcal</center>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <center><div class="Rezeptvorschlag">
+      <table border="dotted">
+        <th> <li>Frühstücksquark Rezept</li>
+          <li>High Protein Pizza Rezept</li>
+        </th>
+      </table>
+    </div>
+    </center>
+  </div>
+  <a href="Home.html"><img id="Home-icon" src="https://cdn-icons-png.flaticon.com/512/1946/1946488.png" alt="Home-icon"></a>
+</div>
+
+</body>
+</html>
