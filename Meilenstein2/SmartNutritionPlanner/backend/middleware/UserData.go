@@ -39,3 +39,20 @@ func SaveUserData(name, age, height, weight, calorieTarget, typeOfDiet string) e
 
 	return nil
 }
+
+// Funktion zum Einlesen und Zurückgeben der Daten
+func LoadUserData() (UserData, error) {
+	var data UserData
+
+	fileBytes, err := os.ReadFile("UserProfile.json")
+	if err != nil {
+		return data, fmt.Errorf("Fehler beim Lesen der Datei: %v", err)
+	}
+
+	err = json.Unmarshal(fileBytes, &data)
+	if err != nil {
+		return data, fmt.Errorf("Fehler beim Parsen der JSON: %v", err)
+	}
+
+	return data, nil
+}
