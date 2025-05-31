@@ -47,19 +47,20 @@ func main() {
 		// b) Barcode-Abfrage: GET /api/product/:barcode
 		apiGroup.GET("/product/:barcode", func(c *gin.Context) {
 			barcode := c.Param("barcode")
-
 			if barcode == "" {
 				c.JSON(http.StatusBadRequest, gin.H{"error": "Barcode is required"})
 				return
 			}
 
-			product, err := client.GetProductByBarcode(barcode)
+			// Produkt aus API holen
+			p, err := client.GetProductByBarcode(barcode)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
 
-			c.JSON(http.StatusOK, product)
+			// JSON-Antwort für das Frontend
+			c.JSON(http.StatusOK, p)
 		})
 	}
 
