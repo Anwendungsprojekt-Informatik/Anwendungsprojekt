@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Konto</title>
+  <style>
+    :root {
+      --primary: #4CAF50;
+      --bg: #f4f4f4;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--bg);
+      color: #333;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .menu-icon {
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -70%;
+      width: 70%;
+      height: 100%;
+      background-color: #333;
+      color: white;
+      padding: 2rem 1rem;
+      transition: left 0.3s ease-in-out;
+      z-index: 1000;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar nav a {
+      display: block;
+      color: white;
+      padding: 1rem 0;
+      text-decoration: none;
+      border-bottom: 1px solid #555;
+    }
+
+    .section {
+      padding: 1.5rem;
+    }
+
+    .user-icon {
+      font-size: 3rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .field {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 0.3rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .btn-row button {
+      flex: 1;
+      padding: 0.7rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      color: white;
+    }
+
+    .btn-edit {
+      background-color: #888;
+    }
+
+    .btn-save {
+      background-color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <nav>
+      <a href="/public/index.html">Home</a>
+      <a href="/public/add-product.html">Artikel hinzufügen</a>
+      <a href="/public/recipes.html">Rezepte</a>
+      <a href="/public/create-recipe.html">Rezept erstellen</a>
+      <a href="/public/shopping-list.html">Einkaufsliste</a>
+      <a href="/public/info.html">Infoseite</a>
+      <a href="/public/account.html">Konto</a>
+    </nav>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <span class="menu-icon" onclick="toggleMenu()">☰</span>
+    <h2>Mein Konto</h2>
+  </header>
+
+  <!-- Inhalt -->
+  <div class="section">
+    <div class="user-icon">👤</div>
+
+    <div class="field">
+      <label>Vorname & Nachname</label>
+      <input type="text" id="name" disabled>
+    </div>
+
+    <div class="field">
+      <label>Alter</label>
+      <input type="number" id="age" disabled>
+    </div>
+
+    <div class="field">
+      <label>Geschlecht</label>
+      <select id="gender" disabled>
+        <option value="">Bitte wählen</option>
+        <option value="m">Männlich</option>
+        <option value="w">Weiblich</option>
+        <option value="d">Divers</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Größe (cm)</label>
+      <input type="number" id="height" disabled>
+    </div>
+
+    <div class="field">
+      <label>Gewicht (kg)</label>
+      <input type="number" id="weight" disabled>
+    </div>
+
+    <div class="field">
+      <label>Kcal-Ziel pro Tag</label>
+      <input type="number" id="kcalTarget" disabled>
+    </div>
+
+    <div class="field">
+      <label>Ernährungsart</label>
+      <select id="dietType" disabled>
+        <option value="">Bitte wählen</option>
+        <option>Vegan</option>
+        <option>Vegetarisch</option>
+        <option>Flexitarisch</option>
+        <option>Omnivor</option>
+        <option>Andere</option>
+      </select>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-edit" onclick="toggleEdit()">✏️ Bearbeiten</button>
+      <button class="btn-save" onclick="saveData()">💾 Speichern</button>
+    </div>
+  </div>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById("sidebar").classList.toggle("active");
+    }
+
+    function toggleEdit() {
+      const fields = document.querySelectorAll("input, select");
+      fields.forEach(f => f.disabled = !f.disabled);
+    }
+
+    function saveData() {
+      const userData = {
+        name: document.getElementById("name").value,
+        age: document.getElementById("age").value,
+        gender: document.getElementById("gender").value,
+        height: document.getElementById("height").value,
+        weight: document.getElementById("weight").value,
+        kcalTarget: document.getElementById("kcalTarget").value,
+        dietType: document.getElementById("dietType").value
+      };
+      localStorage.setItem("userData", JSON.stringify(userData));
+      alert("Daten gespeichert!");
+    }
+
+    function loadData() {
+      const data = JSON.parse(localStorage.getItem("userData") || "{}");
+      if (!data) return;
+
+      document.getElementById("name").value = data.name || "";
+      document.getElementById("age").value = data.age || "";
+      document.getElementById("gender").value = data.gender || "";
+      document.getElementById("height").value = data.height || "";
+      document.getElementById("weight").value = data.weight || "";
+      document.getElementById("kcalTarget").value = data.kcalTarget || "";
+      document.getElementById("dietType").value = data.dietType || "";
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
