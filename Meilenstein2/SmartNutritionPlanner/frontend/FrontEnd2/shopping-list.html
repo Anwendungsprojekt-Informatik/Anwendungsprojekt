@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Einkaufsliste</title>
+  <style>
+    :root {
+      --primary: #4CAF50;
+      --danger: #d32f2f;
+      --bg: #f4f4f4;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--bg);
+      color: #333;
+      padding-bottom: 120px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .menu-icon {
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -70%;
+      width: 70%;
+      height: 100%;
+      background-color: #333;
+      color: white;
+      padding: 2rem 1rem;
+      transition: left 0.3s ease-in-out;
+      z-index: 1000;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar nav a {
+      display: block;
+      color: white;
+      padding: 1rem 0;
+      text-decoration: none;
+      border-bottom: 1px solid #555;
+    }
+
+    .section {
+      padding: 1rem;
+    }
+
+    .add-area {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .add-area input {
+      flex: 1;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .add-area button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 1rem;
+    }
+
+    li {
+      padding: 0.7rem;
+      background: white;
+      border-radius: 5px;
+      margin-bottom: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    li.checked {
+      text-decoration: line-through;
+      color: gray;
+      background-color: #e0e0e0;
+    }
+
+    .btn-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .btn-row button {
+      flex: 1;
+      padding: 0.8rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      color: white;
+    }
+
+    .btn-clear {
+      background-color: var(--danger);
+    }
+
+    .btn-save {
+      background-color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="add-product.html">Artikel hinzufügen</a>
+      <a href="recipes.html">Rezepte</a>
+      <a href="create-recipe.html">Rezept erstellen</a>
+      <a href="shopping-list.html">Einkaufsliste</a>
+      <a href="info.html">Infoseite</a>
+      <a href="account.html">Konto</a>
+    </nav>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <span class="menu-icon" onclick="toggleMenu()">☰</span>
+    <h2>Einkaufsliste</h2>
+  </header>
+
+  <!-- Main Section -->
+  <div class="section">
+    <div class="add-area">
+      <input type="text" id="itemInput" placeholder="Neues Produkt eingeben…" />
+      <button onclick="addItem()">➕</button>
+    </div>
+
+    <ul id="shoppingList"></ul>
+
+    <div class="btn-row">
+      <button class="btn-clear" onclick="clearList()">🗑️ Löschen</button>
+      <button class="btn-save" onclick="saveList()">💾 Speichern</button>
+    </div>
+  </div>
+
+  <script>
+    const listElement = document.getElementById("shoppingList");
+
+    function toggleMenu() {
+      document.getElementById("sidebar").classList.toggle("active");
+    }
+
+    function addItem() {
+      const input = document.getElementById("itemInput");
+      const value = input.value.trim();
+      if (!value) return;
+
+      const li = document.createElement("li");
+      li.textContent = value;
+      li.onclick = () => li.classList.toggle("checked");
+      listElement.appendChild(li);
+      input.value = "";
+    }
+
+    function clearList() {
+      if (confirm("Liste wirklich löschen?")) {
+        listElement.innerHTML = "";
+        localStorage.removeItem("shoppingList");
+      }
+    }
+
+    function saveList() {
+      const items = Array.from(listElement.children).map(li => ({
+        text: li.textContent,
+        checked: li.classList.contains("checked")
+      }));
+      localStorage.setItem("shoppingList", JSON.stringify(items));
+      alert("Liste gespeichert!");
+    }
+
+    function loadList() {
+      const data = JSON.parse(localStorage.getItem("shoppingList") || "[]");
+      data.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item.text;
+        if (item.checked) li.classList.add("checked");
+        li.onclick = () => li.classList.toggle("checked");
+        listElement.appendChild(li);
+      });
+    }
+
+    // Beim Laden ausführen
+    loadList();
+  </script>
+</body>
+</html>

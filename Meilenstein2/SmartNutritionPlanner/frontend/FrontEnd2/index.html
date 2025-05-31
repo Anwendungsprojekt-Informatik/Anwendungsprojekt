@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SmartNutrition - Home</title>
+  <style>
+    :root {
+      --primary: #4CAF50;
+      --bg: #f4f4f4;
+      --danger: #d32f2f;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: #333;
+      padding-bottom: 80px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .menu-icon {
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -70%;
+      width: 70%;
+      height: 100%;
+      background-color: #333;
+      color: white;
+      padding: 2rem 1rem;
+      transition: left 0.3s ease-in-out;
+      z-index: 1000;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar nav a {
+      display: block;
+      color: white;
+      padding: 1rem 0;
+      text-decoration: none;
+      border-bottom: 1px solid #555;
+    }
+
+    .content {
+      padding: 1.5rem;
+      max-width: 500px;
+      margin: auto;
+    }
+
+    .circle {
+      width: 60vw;
+      max-width: 250px;
+      aspect-ratio: 1/1;
+      border-radius: 50%;
+      background: conic-gradient(var(--primary) 65%, #ddd 0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 2rem auto;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #222;
+    }
+
+    .nutrient-bar {
+      margin: 1rem 0;
+    }
+
+    .nutrient-bar label {
+      display: block;
+      margin-bottom: 0.2rem;
+      font-weight: bold;
+    }
+
+    .bar-bg {
+      background: #ddd;
+      height: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 50%;
+      background-color: var(--primary);
+      transition: width 0.3s;
+    }
+
+    .warning {
+      background: #ffebee;
+      color: var(--danger);
+      padding: 1rem;
+      border-left: 5px solid var(--danger);
+      margin-top: 2rem;
+      display: none;
+    }
+
+    .add-button {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background-color: var(--primary);
+      color: white;
+      font-size: 2rem;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    @media (max-width: 400px) {
+      .circle {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="menu-icon" onclick="toggleMenu()">☰</span>
+    <h1 style="margin-left: 1rem; font-size: 1.2rem;">SmartNutrition</h1>
+  </header>
+
+  <div class="sidebar" id="sidebar">
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="add-product.html">Artikel hinzufügen</a>
+      <a href="recipes.html">Rezepte</a>
+      <a href="create-recipe.html">Rezept erstellen</a>
+      <a href="shopping-list.html">Einkaufsliste</a>
+      <a href="info.html">Infoseite</a>
+      <a href="account.html">Konto</a>
+    </nav>
+  </div>
+
+  <div class="content">
+    <div class="circle" id="calorieCircle">
+      1400 kcal übrig
+    </div>
+
+    <div class="nutrient-bar">
+      <label>Fette</label>
+      <div class="bar-bg">
+        <div class="bar-fill" style="width: 60%;"></div>
+      </div>
+    </div>
+
+    <div class="nutrient-bar">
+      <label>Zucker</label>
+      <div class="bar-bg">
+        <div class="bar-fill" style="width: 45%;"></div>
+      </div>
+    </div>
+
+    <div class="nutrient-bar">
+      <label>Kohlenhydrate</label>
+      <div class="bar-bg">
+        <div class="bar-fill" style="width: 70%;"></div>
+      </div>
+    </div>
+
+    <div class="nutrient-bar">
+      <label>Protein</label>
+      <div class="bar-bg">
+        <div class="bar-fill" style="width: 35%;"></div>
+      </div>
+    </div>
+
+    <div class="warning" id="warningBox">
+      ⚠️ Du hast dein Zuckerlimit überschritten!
+    </div>
+  </div>
+
+  <a href="add-product.html" class="add-button">+</a>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    // Beispiel: zeige Warnung wenn ein Nährwert überschritten ist
+    const showWarning = true; // ← dynamisch später ersetzen
+    if (showWarning) {
+      document.getElementById('warningBox').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
