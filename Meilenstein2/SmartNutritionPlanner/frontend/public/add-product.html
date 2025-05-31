@@ -259,7 +259,7 @@
         const container = document.getElementById("searchResults");
         container.innerHTML = "";
 
-        const products = data.Products || [];
+        const products = data.products || [];
         if (products.length === 0) {
           container.innerHTML = "<p>Keine Produkte gefunden.</p>";
           return;

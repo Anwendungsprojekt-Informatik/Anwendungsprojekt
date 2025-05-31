@@ -234,48 +234,68 @@
      * Produktsuche für das Rezept:
      * Wir rufen hier dein Gin-Backend unter /api/search auf
      */
-    async function searchProduct() {
+        async function searchProduct() {
       const query = document.getElementById("searchInput").value.trim();
       if (!query) return;
 
-      const res = await fetch(`/api/search?q=${encodeURIComponent(query)}&page=1`);
-      if (!res.ok) {
-        alert("Fehler bei der Produktsuche: " + res.status);
-        return;
-      }
-      const data = await res.json();
-      const products = data.Products || [];
-      if (products.length === 0) {
-        return alert("Kein Produkt gefunden.");
-      }
+      try {
+        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}&page=1`);
+        if (!res.ok) throw new Error(`Status ${res.status}`);
 
-      // Beispiel: Wir nehmen das erste Ergebnis
-      const p = products[0];
-      const name = p.ProductName || "Unbenannt";
-      // Falls du in Product weitere Nährwert-Felder ergänzt hast, lies sie hier aus.
-      const kcal = 0;
-      const fat = 0;
-      const sugar = 0;
-      const carbs = 0;
-      const protein = 0;
+        const data = await res.json();
+        const container = document.getElementById("searchResults");
+        container.innerHTML = "";
 
-      const card = document.createElement("div");
-      card.className = "product-card";
-      card.innerHTML = `
-        <span class="remove-icon" onclick="this.parentElement.remove()">➖</span>
-        <h3>${name}</h3>
-        <div class="row"><span>Kcal/100g:</span><span>${kcal}</span></div>
-        <div class="row"><span>Fett:</span><span>${fat}g</span></div>
-        <div class="row"><span>Zucker:</span><span>${sugar}g</span></div>
-        <div class="row"><span>Kohlenhydrate:</span><span>${carbs}g</span></div>
-        <div class="row"><span>Protein:</span><span>${protein}g</span></div>
-        <div class="row">
-          <span>Menge:</span>
-          <span><input type="number" min="1" value="100" onchange="calculate(this, ${kcal})" /> g</span>
-        </div>
-        <div class="row"><strong>Berechnet:</strong> <span class="result">${Math.round(kcal)} kcal</span></div>
-      `;
-      document.getElementById("productList").appendChild(card);
+        const products = data.products || [];
+        if (products.length === 0) {
+          container.innerHTML = "<p>Keine Produkte gefunden.</p>";
+          return;
+        }
+
+        // Zeige bis zu 5 Ergebnisse
+        products.slice(0, 5).forEach((p) => {
+          // Anpassen je nach Feldnamen in deiner Go-Struct:
+          const name = p.ProductName || p.product_name || "Unbenannt";
+          const brand = p.Brands || p.brands || "Keine Marke";
+          const barcode = p.Code || p.code || "";
+          const n = p.Nutriments || p.nutriments || {};
+
+          // Nährwerte (falls vorhanden)
+          const kcal = parseFloat(n["energy-kcal_100g"]) || 0;
+          const fat = parseFloat(n["fat_100g"]) || 0;
+          const sugar = parseFloat(n["sugars_100g"]) || 0;
+          const carbs = parseFloat(n["carbohydrates_100g"]) || 0;
+          const protein = parseFloat(n["proteins_100g"]) || 0;
+
+          const card = document.createElement("div");
+          card.className = "product-card";
+          card.innerHTML = `
+            <h3>${name}</h3>
+            <div class="row"><span>Marke:</span><span>${brand}</span></div>
+            <div class="row"><span>Barcode:</span><span>${barcode}</span></div>
+            <div class="row"><span>Kcal/100g:</span><span>${kcal}</span></div>
+            <div class="row"><span>Fett:</span><span>${fat}g</span></div>
+            <div class="row"><span>Zucker:</span><span>${sugar}g</span></div>
+            <div class="row"><span>KH:</span><span>${carbs}g</span></div>
+            <div class="row"><span>Protein:</span><span>${protein}g</span></div>
+            <button class="add-button-small" onclick='addToList(${JSON.stringify({
+              name,
+              kcal,
+              fat,
+              sugar,
+              carbs,
+              protein
+            })})'>
+              ➕ Hinzufügen
+            </button>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        console.error(err);
+        document.getElementById("searchResults").innerHTML =
+          `<p style="color:red">Fehler: ${err.message}</p>`;
+      }
     }
 
     function calculate(input, kcalPer100) {
