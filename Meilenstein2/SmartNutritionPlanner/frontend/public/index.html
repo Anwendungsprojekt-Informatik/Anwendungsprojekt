@@ -239,6 +239,12 @@
       loadEatenList();
     });
 
+    document.addEventListener("click", function(e){
+      if (e.target.matches(".remove")){
+        removeItem(e.target);
+      }
+    });
+
     function toggleMenu() {
       document.getElementById('sidebar').classList.toggle('active');
     }
@@ -286,6 +292,13 @@
 
       entries.forEach(entry => {
         const li = document.createElement("li");
+        li.dataset.name = entry.name;
+        li.dataset.kcal = entry.kcal;
+        li.dataset.protein = entry.protein;
+        li.dataset.fat = entry.fat;
+        li.dataset.carbs = entry.carbs;
+        li.dataset.sugar = entry.sugar;
+
         li.innerHTML = `
           <div>
             <strong>${entry.name}</strong><br>
@@ -294,14 +307,36 @@
             ${entry.fat}g<br>
             ${entry.carbs}g<br>
           </div>
-          <span class="remove" onclick="removeItem(this)">🗑️</span>
+          <span class="remove">🗑️</span>
         `;
         list.appendChild(li);
       });
     }
 
     function removeItem(icon) {
-      icon.closest('li').remove();
+      const li = icon.closest("li");
+      
+      const name = li.dataset.name;
+      const kcal = parseFloat(li.dataset.kcal);
+      const protein = parseFloat(li.dataset.protein);
+      const fat = parseFloat(li.dataset.fat);
+      const carbs = parseFloat(li.dataset.carbs);
+      const sugar = parseFloat(li.dataset.sugar);
+      // Optional: Mengen- oder Makronährwert-Infos aus versteckten Attributen mitgeben, falls nötig
+
+      fetch("/api/daily-entry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, kcal, protein, fat, carbs, sugar }) // ggf. erweitern um weitere Werte
+      })
+        .then(res => {
+          if (!res.ok) throw new Error("Löschen fehlgeschlagen");
+          li.remove(); // nur bei Erfolg im Backend visuell löschen
+        })
+        .catch(err => {
+          console.error(err);
+          alert("Fehler beim Löschen");
+        });
     }
 
     // Beispiel: zeige Warnung wenn ein Nährwert überschritten ist

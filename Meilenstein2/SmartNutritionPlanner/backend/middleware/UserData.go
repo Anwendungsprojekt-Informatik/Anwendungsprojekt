@@ -221,3 +221,61 @@ func GetEntriesForToday(c *gin.Context) {
 
 	c.JSON(http.StatusOK, []ProductEntry{}) // leerer Tag
 }
+
+// Eintrag aus DailyEntries löschen
+func DeleteDailyEntry(c *gin.Context) {
+	var toDelete ProductEntry
+	if err := c.ShouldBindJSON(&toDelete); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
+		return
+	}
+
+	var data DailyFood
+	filename := "DailyFoodLog.json"
+
+	content, err := os.ReadFile(filename)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "file read error"})
+		return
+	}
+
+	if err := json.Unmarshal(content, &data); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "json parse error"})
+		return
+	}
+
+	today := time.Now().Format("2006-01-02")
+
+	for i, day := range data.Days {
+		if day.Date == today {
+			newEntries := []ProductEntry{}
+			for _, entry := range day.Entries {
+				// nur behalten, wenn NICHT identisch
+				if !(entry.Name == toDelete.Name &&
+					entry.Kcal == toDelete.Kcal &&
+					entry.Protein == toDelete.Protein &&
+					entry.Fat == toDelete.Fat &&
+					entry.Carbs == toDelete.Carbs &&
+					entry.Sugar == toDelete.Sugar) {
+					newEntries = append(newEntries, entry)
+				}
+			}
+			data.Days[i].Entries = newEntries
+			break
+		}
+	}
+
+	// zurückschreiben
+	updated, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "marshal error"})
+		return
+	}
+
+	if err := os.WriteFile(filename, updated, 0644); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "write error"})
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
