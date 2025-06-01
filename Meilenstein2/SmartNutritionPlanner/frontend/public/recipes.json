@@ -20,7 +20,8 @@
         "kalorien": 350,
         "protein": 20,
         "fett": 30,
-        "kohlenhydrate": 1
+        "kohlenhydrate": 1,
+        "zucker": 0.5
       }
     },
     "Mittagessen": {
@@ -47,7 +48,8 @@
         "kalorien": 600,
         "protein": 45,
         "fett": 15,
-        "kohlenhydrate": 60
+        "kohlenhydrate": 60,
+        "zucker": 2.5
       }
     },
     "Abendessen": {
@@ -74,7 +76,8 @@
         "kalorien": 700,
         "protein": 50,
         "fett": 35,
-        "kohlenhydrate": 50
+        "kohlenhydrate": 50,
+        "zucker": 3.6
       }
     }
   },
@@ -103,7 +106,8 @@
         "kalorien": 350,
         "protein": 12,
         "fett": 8,
-        "kohlenhydrate": 60
+        "kohlenhydrate": 60,
+        "zucker": 25
       }
     },
     "Mittagessen": {
@@ -138,7 +142,8 @@
         "kalorien": 500,
         "protein": 25,
         "fett": 6,
-        "kohlenhydrate": 80
+        "kohlenhydrate": 80,
+        "zucker": 10
       }
     },
     "Abendessen": {
@@ -169,7 +174,8 @@
         "kalorien": 550,
         "protein": 25,
         "fett": 20,
-        "kohlenhydrate": 65
+        "kohlenhydrate": 65,
+        "zucker": 9
       }
     }
   },
@@ -198,7 +204,8 @@
         "kalorien": 300,
         "protein": 12,
         "fett": 8,
-        "kohlenhydrate": 45
+        "kohlenhydrate": 45,
+        "zucker": 33
       }
     },
     "Mittagessen": {
@@ -233,7 +240,8 @@
         "kalorien": 650,
         "protein": 30,
         "fett": 30,
-        "kohlenhydrate": 60
+        "kohlenhydrate": 60,
+        "zucker": 15
       }
     },
     "Abendessen": {
@@ -268,7 +276,8 @@
         "kalorien": 450,
         "protein": 18,
         "fett": 18,
-        "kohlenhydrate": 50
+        "kohlenhydrate": 50,
+        "zucker": 16
       }
     }
   }

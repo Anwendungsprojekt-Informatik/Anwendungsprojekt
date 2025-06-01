@@ -4,36 +4,20 @@
       "date": "2025-06-01",
       "entries": [
         {
-          "name": "Speisequark",
-          "kcal": 330,
-          "fat": 1,
-          "sugar": 20.5,
-          "carbs": 20.5,
-          "protein": 60
+          "name": "TK - Beerenmischung",
+          "kcal": 51,
+          "fat": 0.2,
+          "sugar": 8.8,
+          "carbs": 9.1,
+          "protein": 0.8
         },
         {
-          "name": "Nutella",
-          "kcal": 162,
-          "fat": 9.3,
-          "sugar": 16.9,
-          "carbs": 17.3,
-          "protein": 1.9
-        },
-        {
-          "name": "Nutella",
-          "kcal": 270,
-          "fat": 15.4,
-          "sugar": 28.1,
-          "carbs": 28.8,
-          "protein": 3.1
-        },
-        {
-          "name": "Speisequark",
-          "kcal": 330,
-          "fat": 1,
-          "sugar": 20.5,
-          "carbs": 20.5,
-          "protein": 60
+          "name": "Rührei mit Speck",
+          "kcal": 350,
+          "fat": 30,
+          "sugar": 0.5,
+          "carbs": 1,
+          "protein": 20
         }
       ]
     }

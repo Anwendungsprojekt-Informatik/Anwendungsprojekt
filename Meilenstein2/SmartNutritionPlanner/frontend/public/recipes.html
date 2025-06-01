@@ -221,7 +221,7 @@
       const existing = JSON.parse(localStorage.getItem("shoppingList") || "[]");
       produkteArray.forEach(item => {
         const produktName = item.name || "";
-        const mengeWert = ""; // eigene Rezepte haben keine „menge“, deshalb leer lassen
+        const mengeWert = ""; // eigene Rezepte haben keine „menge“, daher leer
         if (!produktName) return;
         const exists = existing.some(e => e.produkt === produktName);
         if (!exists) {
@@ -236,6 +236,40 @@
       localStorage.setItem("shoppingList", JSON.stringify(existing));
       alert("Zutaten des eigenen Rezepts wurden der Einkaufsliste hinzugefügt!");
     }
+
+    // ---------- Funktion, um eigenes Rezept in DailyFoodLog.json zu speichern ----------
+    function addOwnRecipeToDailyLog(recipe) {
+      // Summiere alle kcal-Werte der Produkte, dabei wandeln wir p.kcal explizit in Number um.
+      const totalKcal = (recipe.products || []).reduce((sum, p) => {
+        // p.kcal kann ein String sein, deshalb: Number(p.kcal) oder parseInt
+        return sum + (Number(p.kcal) || 0);
+      }, 0);
+
+      // Jetzt unbedingt das Feld "sugar: 0" mitschicken, damit das JSON-Shape passt:
+      const entry = {
+        name: recipe.name,
+        kcal: totalKcal,  // ist jetzt definitiv eine Number
+        fat: 0,
+        sugar: 0,
+        carbs: 0,
+        protein: 0
+      };
+
+      fetch("/api/daily-entries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify([entry])
+      })
+      .then(res => {
+        if (!res.ok) throw new Error("Fehler beim Hinzufügen des eigenen Rezepts");
+        alert(`"${recipe.name}" wurde zu Deinen gegessenen Einträgen hinzugefügt.`);
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Fehler beim Hinzufügen des eigenen Rezepts");
+      });
+    }
+    // --------------------------------------------------------------------------------------
 
     // Lädt eigene Rezepte aus localStorage und fügt + und Einkaufswagen‐Buttons hinzu
     function loadOwnRecipes() {
@@ -271,11 +305,12 @@
         cartBtn.onclick = () => addOwnRecipeToShoppingList(index);
         card.appendChild(cartBtn);
 
-        // Plus-Button
+        // Plus-Button (fügt Rezept zu DailyFoodLog hinzu)
         const plusBtn = document.createElement("button");
         plusBtn.className = "plus-icon";
         plusBtn.textContent = "+";
-        plusBtn.title = "Weitere Aktion…";
+        plusBtn.title = "Als gegessen markieren";
+        plusBtn.onclick = () => addOwnRecipeToDailyLog(recipe);
         card.appendChild(plusBtn);
 
         // Rezeptname
@@ -343,11 +378,12 @@
           cartBtn.onclick = () => addProductsToShoppingList(recipe.produkte);
           card.appendChild(cartBtn);
 
-          // Plus-Button
+          // Plus-Button (fügt empfohlenes Rezept zu DailyFoodLog hinzu)
           const plusBtn = document.createElement("button");
           plusBtn.className = "plus-icon";
           plusBtn.textContent = "+";
-          plusBtn.title = "Weitere Aktion…";
+          plusBtn.title = "Als gegessen markieren";
+          plusBtn.onclick = () => addRecommendedRecipeToDailyLog(recipe);
           card.appendChild(plusBtn);
 
           // Rezeptname
@@ -361,7 +397,8 @@
             { label: "Kcal:", value: nv.kalorien ?? "-" },
             { label: "Fett:", value: nv.fett != null ? nv.fett + "g" : "-" },
             { label: "Kohlenhydrate:", value: nv.kohlenhydrate != null ? nv.kohlenhydrate + "g" : "-" },
-            { label: "Protein:", value: nv.protein != null ? nv.protein + "g" : "-" }
+            { label: "Protein:", value: nv.protein != null ? nv.protein + "g" : "-" },
+            { label: "Zucker:", value: nv.zucker != null ? nv.zucker + "g" : "-" }
           ];
           rows.forEach(r => {
             const rowDiv = document.createElement("div");
@@ -379,6 +416,34 @@
         container.appendChild(msg);
       }
     }
+
+    // ---------- Funktion, um empfohlenes Rezept in DailyFoodLog.json zu speichern ----------
+    function addRecommendedRecipeToDailyLog(recipe) {
+      const nv = recipe.naehrwerte || {};
+      // Da recipes.json keine "sugar"-Angabe hat, setzen wir sugar = 0
+      const entry = {
+        name: recipe.name,
+        kcal: nv.kalorien || 0,
+        fat: nv.fett || 0,
+        sugar: nv.zucker,
+        carbs: nv.kohlenhydrate || 0,
+        protein: nv.protein || 0
+      };
+      fetch("/api/daily-entries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify([entry])
+      })
+      .then(res => {
+        if (!res.ok) throw new Error("Fehler beim Hinzufügen des Rezepts");
+        alert(`"${recipe.name}" wurde zu Deinen gegessenen Einträgen hinzugefügt.`);
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Fehler beim Hinzufügen des Rezepts");
+      });
+    }
+    // --------------------------------------------------------------------------------------
 
     // Fügt Zutaten aus recipes.json zur Einkaufsliste hinzu
     function addProductsToShoppingList(produkteArray) {
