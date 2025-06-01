@@ -107,6 +107,31 @@
       transition: width 0.3s;
     }
 
+    .eaten-section {
+      margin-top: 2rem;
+    }
+
+    .eaten-section h3 {
+      margin-bottom: 0.7rem;
+    }
+
+    #eatenList li {
+      background: white;
+      padding: 0.8rem;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    #eatenList li .remove {
+      cursor: pointer;
+      font-size: 1.3rem;
+      color: var(--danger);
+    }
+
     .warning {
       background: #ffebee;
       color: var(--danger);
@@ -200,13 +225,6 @@
   <div class="eaten-section">
       <h3>Heute gegessen</h3>
       <ul id="eatenList">
-        <li>
-          <div>
-            <strong>Banane</strong><br>
-            150g – 132 kcal
-          </div>
-          <span class="remove" onclick="removeItem(this)">🗑️</span>
-        </li>
       </ul>
     </div>
   </div>
@@ -218,6 +236,7 @@
     //Automatisches ausführen der Nutrients
     window.addEventListener("DOMContentLoaded", () => {
       loadNutrients();
+      loadEatenList();
     });
 
     function toggleMenu() {
@@ -253,11 +272,44 @@
         .catch(err => console.error("API-Fehler:", err));
     }
 
+    // Funktion für heute gegessen
+    async function loadEatenList() {
+    const response = await fetch("/api/today-entries");
+    if (!response.ok) {
+      console.error("Fehler beim Laden der heutigen Einträge");
+      return;
+    }
+
+    const entries = await response.json();
+    const list = document.getElementById("eatenList");
+    list.innerHTML = ""; // vorherige Einträge löschen
+
+      entries.forEach(entry => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <div>
+            <strong>${entry.name}</strong><br>
+            ${entry.kcal} kcal<br>
+            ${entry.protein}g<br>
+            ${entry.fat}g<br>
+            ${entry.carbs}g<br>
+          </div>
+          <span class="remove" onclick="removeItem(this)">🗑️</span>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    function removeItem(icon) {
+      icon.closest('li').remove();
+    }
+
     // Beispiel: zeige Warnung wenn ein Nährwert überschritten ist
     const showWarning = true; // ← später dynamisch anpassen
     if (showWarning) {
       document.getElementById('warningBox').style.display = 'block';
     }
+    
   </script>
 </body>
 </html>

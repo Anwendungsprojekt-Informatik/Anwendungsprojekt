@@ -127,6 +127,9 @@ func main() {
 
 		// e) DailySummary Home: GET /api/daily-summary
 		apiGroup.GET("/daily-summary", middleware.HandleDailySummary)
+
+		// f) Heute gegessen Einträge: GET /api/today-entries
+		apiGroup.GET("/today-entries", middleware.GetEntriesForToday)
 	}
 
 	// ---------------------------------------------------

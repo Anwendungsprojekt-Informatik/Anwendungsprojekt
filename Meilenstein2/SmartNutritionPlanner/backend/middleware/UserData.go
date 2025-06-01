@@ -197,3 +197,27 @@ func CalculateTotalNutrientsForToday() (Nutrients, error) {
 
 	return total, fmt.Errorf("no entries found for today (%s)", today)
 }
+
+func GetEntriesForToday(c *gin.Context) {
+	data, err := os.ReadFile("DailyFoodLog.json")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "file read error"})
+		return
+	}
+
+	var log DailyFood
+	if err := json.Unmarshal(data, &log); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "json parse error"})
+		return
+	}
+
+	today := time.Now().Format("2006-01-02")
+	for _, day := range log.Days {
+		if day.Date == today {
+			c.JSON(http.StatusOK, day.Entries)
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, []ProductEntry{}) // leerer Tag
+}
