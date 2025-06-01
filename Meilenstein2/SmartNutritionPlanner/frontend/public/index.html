@@ -188,7 +188,7 @@
     <div class="nutrient-bar">
       <label>Zucker</label>
       <div class="bar-bg">
-        <div class="bar-fill sugar" style="width: 35%;"></div>
+        <div class="bar-fill sugar" style="width: 0%;"></div>
       </div>
     </div>
 
@@ -201,6 +201,11 @@
   <a href="/public/add-product.html" class="add-button">+</a>
 
   <script>
+    //Automatisches ausführen der Nutrients
+    window.addEventListener("DOMContentLoaded", () => {
+      loadNutrients();
+    });
+
     function toggleMenu() {
       document.getElementById('sidebar').classList.toggle('active');
     }

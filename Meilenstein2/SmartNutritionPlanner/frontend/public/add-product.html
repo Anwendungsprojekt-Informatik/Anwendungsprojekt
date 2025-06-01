@@ -466,7 +466,7 @@
         entries.push({ name, kcal, fat, sugar, carbs, protein});
       });
 
-      fetch("/middleware/daily-entries",{
+      fetch("/api/daily-entries",{
         method: "POST",
         headers: { "Content-Type": "application/json"},
         body: JSON.string
