@@ -4,8 +4,24 @@
       "date": "2025-06-01",
       "entries": [
         {
-          "name": "Speisequark",
-          "kcal": 330,
+          "name": "TK - Beerenmischung",
+          "kcal": 51,
+          "fat": 0.2,
+          "sugar": 8.8,
+          "carbs": 9.1,
+          "protein": 0.8
+        },
+        {
+          "name": "Rührei mit Speck",
+          "kcal": 350,
+          "fat": 30,
+          "sugar": 0.5,
+          "carbs": 1,
+          "protein": 20
+        },
+        {
+          "name": "Frühstück",
+          "kcal": 180,
           "fat": 1,
           "sugar": 20.5,
           "carbs": 20.5,

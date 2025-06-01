@@ -1,3 +1,4 @@
+Meilenstein2\SmartNutritionPlanner\frontend\public\create-recipe.html
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -374,10 +375,10 @@
             <div class="row"><span>Marke:</span><span>${brand}</span></div>
             <div class="row"><span>Barcode:</span><span>${barcode}</span></div>
             <div class="row"><span>Kcal/100g:</span><span>${kcal}</span></div>
-            <div class="row"><span>Fett/100g:</span><span>${fat} g</span></div>
-            <div class="row"><span>Zucker/100g:</span><span>${sugar} g</span></div>
-            <div class="row"><span>KH/100g:</span><span>${carbs} g</span></div>
-            <div class="row"><span>Protein/100g:</span><span>${protein} g</span></div>
+            <div class="row"><span>Fett:</span><span>${fat}g</span></div>
+            <div class="row"><span>Zucker:</span><span>${sugar}g</span></div>
+            <div class="row"><span>KH:</span><span>${carbs}g</span></div>
+            <div class="row"><span>Protein:</span><span>${protein}g</span></div>
             <button class="add-button-small" onclick='addToList(${JSON.stringify({
               name,
               kcal,
@@ -464,115 +465,58 @@
 
       const card = document.createElement("div");
       card.className = "product-card";
-
-      /* → WICHTIG: Jede Nährwert-Zeile enthält jetzt zwei <span>:
-        1. Ein Label-<span> (z. B. "Fett:")
-        2. Ein Wert-<span class="result fat"> (z. B. "5 g")
-       */
       card.innerHTML = `
         <span class="remove-icon" onclick="this.parentElement.remove()">➖</span>
         <h3>${product.name}</h3>
         <div class="row"><span>Kcal/100g:</span><span>${product.kcal}</span></div>
-        <div class="row"><span>Fett/100g:</span><span class="result fat">${product.fat} g</span></div>
-        <div class="row"><span>Zucker/100g:</span><span class="result sugar">${product.sugar} g</span></div>
-        <div class="row"><span>KH/100g:</span><span class="result carbs">${product.carbs} g</span></div>
-        <div class="row"><span>Protein/100g:</span><span class="result protein">${product.protein} g</span></div>
+        <div class="row"><span class="result fat">Fett:</span><span>${product.fat}g</span></div>
+        <div class="row"><span class="result sugar">Zucker:</span><span>${product.sugar}g</span></div>
+        <div class="row"><span class="result carbs">KH:</span><span>${product.carbs}g</span></div>
+        <div class="row"><span class="result protein">Protein:</span><span>${product.protein}g</span></div>
         <div class="row">
-          <span>Menge (g):</span>
-          <span>
-            <input type="number" min="1" value="100"
-              onchange="calculate(this, ${product.kcal}, ${product.fat}, ${product.sugar}, ${product.carbs}, ${product.protein})" /> 
-            g
-          </span>
+          <span>Menge:</span>
+          <span><input type="number" min="1" value="100"
+            onchange="calculate(this, ${product.kcal}, ${product.fat}, ${product.sugar}, ${product.carbs}, ${product.protein})" /> g</span>
         </div>
-        <div class="row">
-          <strong>Berechnet:</strong>
-          <span class="result kcal">${Math.round(product.kcal)} kcal</span>
-        </div>
+        <div class="row"><strong>Berechnet:</strong> <span class="result kcal">${Math.round(product.kcal)} kcal</span></div>
       `;
       list.appendChild(card);
     }
 
     function calculate(input, kcalPer100, fatPer100, sugarPer100, carbsPer100, proteinPer100) {
       const g = parseFloat(input.value) || 0;
-      const kcal    = Math.round((kcalPer100 * g) / 100);
-      const fat     = Math.round((fatPer100 * g) / 100);
-      const sugar   = Math.round((sugarPer100 * g) / 100);
-      const carbs   = Math.round((carbsPer100 * g) / 100);
+      const kcal = Math.round((kcalPer100 * g) / 100);
+      const fat = Math.round((fatPer100 * g) / 100);
+      const sugar = Math.round((sugarPer100 * g) / 100);
+      const carbs = Math.round((carbsPer100 * g) / 100);
       const protein = Math.round((proteinPer100 * g) / 100);
-
       const result = input.closest(".product-card");
-      // Die computed-Werte hier überschreiben
-      result.querySelector(".result.kcal").textContent   = `${kcal} kcal`;
-      result.querySelector(".result.fat").textContent    = `${fat} g`;
-      result.querySelector(".result.sugar").textContent  = `${sugar} g`;
-      result.querySelector(".result.carbs").textContent  = `${carbs} g`;
-      result.querySelector(".result.protein").textContent= `${protein} g`;
+      result.querySelector(".result.kcal").textContent = `${kcal} kcal`;
+      result.querySelector(".result.fat").textContent = `${fat} g`;
+      result.querySelector(".result.sugar").textContent = `${sugar} g`;
+      result.querySelector(".result.carbs").textContent = `${carbs} g`;
+      result.querySelector(".result.protein").textContent = `${protein} g`;
     }
 
     function saveRecipe() {
       const name = document.getElementById("recipeName").value.trim();
-      if (!name) {
-        alert("Bitte Rezeptnamen eingeben.");
-        return;
-      }
+      if (!name) return alert("Bitte Rezeptnamen eingeben.");
 
-      // Alle Produkt-Karten auf der Seite
       const cards = document.querySelectorAll(".product-card");
-      if (cards.length === 0) {
-        alert("Bitte mindestens ein Produkt hinzufügen.");
-        return;
-      }
+      if (cards.length === 0) return alert("Bitte mindestens ein Produkt hinzufügen.");
 
-      // Aus jeder Karte holen wir: name, menge und alle .result-Werte
       const products = Array.from(cards).map(card => {
-        // 1) Produkt-Name
-        const prodName = card.querySelector("h3").textContent;
-
-        // 2) Menge in Gramm
-        const mengeInput = card.querySelector("input[type='number']");
-        const menge = parseFloat(mengeInput.value) || 0;
-
-        // 3) Einzelne Nährwerte: .result.kcal/.result.fat/.result.sugar/.result.carbs/.result.protein
-        //    Hier entfernen wir je die Einheit (" kcal" bzw. " g") und parsen alle als Integer.
-        const kcalText   = card.querySelector(".result.kcal").textContent.replace(" kcal", "");
-        const fatText    = card.querySelector(".result.fat") .textContent.replace(" g",   "");
-        const sugarText  = card.querySelector(".result.sugar").textContent.replace(" g", "");
-        const carbsText  = card.querySelector(".result.carbs").textContent.replace(" g", "");
-        const proteinText= card.querySelector(".result.protein").textContent.replace(" g", "");
-
         return {
-          name: prodName,
-          menge_g: menge,
-          naehrwerte: {
-            kcal:    parseInt(kcalText,    10) || 0,
-            fat:     parseInt(fatText,     10) || 0,
-            sugar:   parseInt(sugarText,   10) || 0,
-            carbs:   parseInt(carbsText,   10) || 0,
-            protein: parseInt(proteinText, 10) || 0
-          }
+          name: card.querySelector("h3").textContent,
+          kcal: card.querySelector(".result.kcal").textContent.replace(" kcal", "")
         };
       });
 
-      // 4) Gesamt-Nährwerte aufsummieren
-      const total = products.reduce((acc, p) => {
-        acc.kcal    += p.naehrwerte.kcal;
-        acc.fat     += p.naehrwerte.fat;
-        acc.sugar   += p.naehrwerte.sugar;
-        acc.carbs   += p.naehrwerte.carbs;
-        acc.protein += p.naehrwerte.protein;
-        return acc;
-      }, { kcal: 0, fat: 0, sugar: 0, carbs: 0, protein: 0 });
-
-      // 5) Neues Rezept-Objekt (mit allen Nährwerten)
       const newRecipe = {
         name,
         products,
-        totalNaehrwerte: total,
         timestamp: Date.now()
       };
-
-      // 6) In localStorage abspeichern
       const existing = JSON.parse(localStorage.getItem("ownRecipes") || "[]");
       existing.push(newRecipe);
       localStorage.setItem("ownRecipes", JSON.stringify(existing));
@@ -583,3 +527,283 @@
   </script>
 </body>
 </html>
+
+----
+
+
+Meilenstein2\SmartNutritionPlanner\frontend\public\recipes.json
+{
+  "Omnivor": {
+    "Frühstück": {
+      "name": "Rührei mit Speck",
+      "produkte": [
+        {
+          "produkt": "Eier",
+          "menge": "2 Stück"
+        },
+        {
+          "produkt": "Speck",
+          "menge": "50 g"
+        },
+        {
+          "produkt": "Butter",
+          "menge": "10 g"
+        }
+      ],
+      "naehrwerte": {
+        "kalorien": 350,
+        "protein": 20,
+        "fett": 30,
+        "kohlenhydrate": 1
+      }
+    },
+    "Mittagessen": {
+      "name": "Hähnchenbrust mit Reis und Gemüse",
+      "produkte": [
+        {
+          "produkt": "Hähnchenbrust",
+          "menge": "200 g"
+        },
+        {
+          "produkt": "Reis (ungekocht)",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Brokkoli",
+          "menge": "150 g"
+        },
+        {
+          "produkt": "Olivenöl",
+          "menge": "10 g"
+        }
+      ],
+      "naehrwerte": {
+        "kalorien": 600,
+        "protein": 45,
+        "fett": 15,
+        "kohlenhydrate": 60
+      }
+    },
+    "Abendessen": {
+      "name": "Rindersteak mit Kartoffeln und Salat",
+      "produkte": [
+        {
+          "produkt": "Rindersteak",
+          "menge": "200 g"
+        },
+        {
+          "produkt": "Kartoffeln",
+          "menge": "200 g"
+        },
+        {
+          "produkt": "Salatmix",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Dressing (Olivenöl & Essig)",
+          "menge": "20 g"
+        }
+      ],
+      "naehrwerte": {
+        "kalorien": 700,
+        "protein": 50,
+        "fett": 35,
+        "kohlenhydrate": 50
+      }
+    }
+  },
+  "Vegan": {
+    "Frühstück": {
+      "name": "Haferbrei mit Banane",
+      "produkte": [
+        {
+          "produkt": "Haferflocken",
+          "menge": "50 g"
+        },
+        {
+          "produkt": "Sojamilch",
+          "menge": "200 ml"
+        },
+        {
+          "produkt": "Banane",
+          "menge": "1 Stück"
+        },
+        {
+          "produkt": "Leinsamen",
+          "menge": "10 g"
+        }
+      ],
+      "naehrwerte": {
+        "kalorien": 350,
+        "protein": 12,
+        "fett": 8,
+        "kohlenhydrate": 60
+      }
+    },
+    "Mittagessen": {
+      "name": "Linsensuppe mit Vollkornbrot",
+      "produkte": [
+        {
+          "produkt": "Rote Linsen",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Karotten",
+          "menge": "50 g"
+        },
+        {
+          "produkt": "Zwiebel",
+          "menge": "50 g"
+        },
+        {
+          "produkt": "Tomaten",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Gemüsebrühe",
+          "menge": "500 ml"
+        },
+        {
+          "produkt": "Vollkornbrot",
+          "menge": "60 g (2 Scheiben)"
+        }
+      ],
+      "naehrwerte": {
+        "kalorien": 500,
+        "protein": 25,
+        "fett": 6,
+        "kohlenhydrate": 80
+      }
+    },
+    "Abendessen": {
+      "name": "Tofu-Gemüse-Pfanne",
+      "produkte": [
+        {
+          "produkt": "Tofu",
+          "menge": "150 g"
+        },
+        {
+          "produkt": "Paprika",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Zucchini",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Sojasoße",
+          "menge": "20 g"
+        },
+        {
+          "produkt": "Reis (ungekocht)",
+          "menge": "100 g"
+        }
+      ],
+      "naehrwerte": {
+        "kalorien": 550,
+        "protein": 25,
+        "fett": 20,
+        "kohlenhydrate": 65
+      }
+    }
+  },
+  "Vegetarisch": {
+    "Frühstück": {
+      "name": "Joghurt mit Früchten und Müsli",
+      "produkte": [
+        {
+          "produkt": "Naturjoghurt",
+          "menge": "150 g"
+        },
+        {
+          "produkt": "Obstmix (Beeren)",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Müsli",
+          "menge": "50 g"
+        },
+        {
+          "produkt": "Honig",
+          "menge": "10 g"
+        }
+      ],
+      "naehrwerte": {
+        "kalorien": 300,
+        "protein": 12,
+        "fett": 8,
+        "kohlenhydrate": 45
+      }
+    },
+    "Mittagessen": {
+      "name": "Gemüse-Lasagne",
+      "produkte": [
+        {
+          "produkt": "Lasagneblätter",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Zucchini",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Aubergine",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Tomatensauce",
+          "menge": "150 g"
+        },
+        {
+          "produkt": "Mozzarella",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Parmesan",
+          "menge": "20 g"
+        }
+      ],
+      "naehrwerte": {
+        "kalorien": 650,
+        "protein": 30,
+        "fett": 30,
+        "kohlenhydrate": 60
+      }
+    },
+    "Abendessen": {
+      "name": "Kichererbsensalat mit Feta",
+      "produkte": [
+        {
+          "produkt": "Kichererbsen (gekocht)",
+          "menge": "200 g"
+        },
+        {
+          "produkt": "Paprika",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Gurke",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Feta",
+          "menge": "50 g"
+        },
+        {
+          "produkt": "Olivenöl",
+          "menge": "10 g"
+        },
+        {
+          "produkt": "Zitronensaft",
+          "menge": "10 g"
+        }
+      ],
+      "naehrwerte": {
+        "kalorien": 450,
+        "protein": 18,
+        "fett": 18,
+        "kohlenhydrate": 50
+      }
+    }
+  }
+}

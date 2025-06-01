@@ -8,7 +8,9 @@
     :root {
       --primary: #4CAF50;
       --danger: #d32f2f;
+      --secondary: #388E3C;
       --bg: #f4f4f4;
+      --text-dark: #333;
     }
 
     * {
@@ -19,7 +21,7 @@
       margin: 0;
       font-family: Arial, sans-serif;
       background-color: var(--bg);
-      color: #333;
+      color: var(--text-dark);
       padding-bottom: 120px;
     }
 
@@ -96,6 +98,9 @@
     }
 
     li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       padding: 0.7rem;
       background: white;
       border-radius: 5px;
@@ -109,6 +114,21 @@
       text-decoration: line-through;
       color: gray;
       background-color: #e0e0e0;
+    }
+
+    .item-text {
+      flex: 1;
+    }
+
+    .delete-checked-btn {
+      margin-top: 1rem;
+      padding: 0.7rem;
+      width: 100%;
+      background-color: var(--secondary);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
     }
 
     .btn-row {
@@ -160,14 +180,16 @@
   <!-- Main Section -->
   <div class="section">
     <div class="add-area">
-      <input type="text" id="itemInput" placeholder="Neues Produkt eingeben…" />
-      <button onclick="addItem()">➕</button>
+      <input type="text" id="itemInput" placeholder="Neues Produkt eingeben… (z.B. Tomaten – 500 g)" />
+      <button onclick="addManualItem()">➕</button>
     </div>
 
     <ul id="shoppingList"></ul>
 
+    <button class="delete-checked-btn" onclick="deleteCheckedItems()">✔️ Abgehakte löschen</button>
+
     <div class="btn-row">
-      <button class="btn-clear" onclick="clearList()">🗑️ Löschen</button>
+      <button class="btn-clear" onclick="clearList()">🗑️ Alle löschen</button>
       <button class="btn-save" onclick="saveList()">💾 Speichern</button>
     </div>
   </div>
@@ -179,47 +201,81 @@
       document.getElementById("sidebar").classList.toggle("active");
     }
 
-    function addItem() {
+    function addManualItem() {
       const input = document.getElementById("itemInput");
-      const value = input.value.trim();
-      if (!value) return;
+      const raw = input.value.trim();
+      if (!raw) return;
 
-      const li = document.createElement("li");
-      li.textContent = value;
-      li.onclick = () => li.classList.toggle("checked");
-      listElement.appendChild(li);
+      let produkt = raw;
+      let menge = "";
+      if (raw.includes(" – ")) {
+        const parts = raw.split(" – ");
+        produkt = parts[0].trim();
+        menge = parts[1].trim();
+      } else if (raw.includes(" - ")) {
+        const parts = raw.split(" - ");
+        produkt = parts[0].trim();
+        menge = parts[1].trim();
+      }
+
+      const newItem = { produkt, menge, checked: false };
+      const data = JSON.parse(localStorage.getItem("shoppingList") || "[]");
+      data.push(newItem);
+      localStorage.setItem("shoppingList", JSON.stringify(data));
+
+      appendListItem(newItem);
       input.value = "";
     }
 
+    function loadList() {
+      const data = JSON.parse(localStorage.getItem("shoppingList") || "[]");
+      listElement.innerHTML = "";
+      data.forEach(item => appendListItem(item));
+    }
+
+    function appendListItem(itemData) {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <span class="item-text">${itemData.produkt}${itemData.menge ? " – " + itemData.menge : ""}</span>
+      `;
+      if (itemData.checked) li.classList.add("checked");
+      li.onclick = () => {
+        li.classList.toggle("checked");
+        updateItemCheckedStatus(itemData.produkt, itemData.menge, li.classList.contains("checked"));
+      };
+      listElement.appendChild(li);
+    }
+
+    function updateItemCheckedStatus(produkt, menge, isChecked) {
+      const data = JSON.parse(localStorage.getItem("shoppingList") || "[]");
+      for (let obj of data) {
+        if (obj.produkt === produkt && obj.menge === menge) {
+          obj.checked = isChecked;
+          break;
+        }
+      }
+      localStorage.setItem("shoppingList", JSON.stringify(data));
+    }
+
+    function deleteCheckedItems() {
+      let data = JSON.parse(localStorage.getItem("shoppingList") || "[]");
+      data = data.filter(obj => !obj.checked);
+      localStorage.setItem("shoppingList", JSON.stringify(data));
+      loadList();
+    }
+
     function clearList() {
-      if (confirm("Liste wirklich löschen?")) {
+      if (confirm("Liste wirklich komplett löschen?")) {
         listElement.innerHTML = "";
         localStorage.removeItem("shoppingList");
       }
     }
 
     function saveList() {
-      const items = Array.from(listElement.children).map(li => ({
-        text: li.textContent,
-        checked: li.classList.contains("checked")
-      }));
-      localStorage.setItem("shoppingList", JSON.stringify(items));
       alert("Liste gespeichert!");
     }
 
-    function loadList() {
-      const data = JSON.parse(localStorage.getItem("shoppingList") || "[]");
-      data.forEach(item => {
-        const li = document.createElement("li");
-        li.textContent = item.text;
-        if (item.checked) li.classList.add("checked");
-        li.onclick = () => li.classList.toggle("checked");
-        listElement.appendChild(li);
-      });
-    }
-
-    // Beim Laden einmal ausführen
-    loadList();
+    window.addEventListener("DOMContentLoaded", loadList);
   </script>
 </body>
 </html>
