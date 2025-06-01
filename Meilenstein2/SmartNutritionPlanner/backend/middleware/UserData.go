@@ -91,6 +91,7 @@ func LoadUserData() (UserData, error) {
 
 // Funktion zum handlen des http Requests für die daily Entries
 func HandleDailyEntries(c *gin.Context) {
+	fmt.Println("POST /api/daily-entries wurde aufgerufen")
 	var entries []ProductEntry
 	if err := c.ShouldBindJSON(&entries); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
@@ -128,7 +129,7 @@ func AddDailyEntries(newEntries []ProductEntry) error {
 	for i, day := range data.Days {
 		if day.Date == today {
 			// Wenn ja: existierende Einträge ersetzen (oder erweitern)
-			data.Days[i].Entries = newEntries
+			data.Days[i].Entries = append(data.Days[i].Entries, newEntries...)
 			found = true
 			break
 		}

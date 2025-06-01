@@ -1,0 +1,25 @@
+{
+  "DailyFoodLog.json": [
+    {
+      "date": "2025-06-01",
+      "entries": [
+        {
+          "name": "Speisequark",
+          "kcal": 330,
+          "fat": 1,
+          "sugar": 20.5,
+          "carbs": 20.5,
+          "protein": 60
+        },
+        {
+          "name": "Nutella",
+          "kcal": 162,
+          "fat": 9.3,
+          "sugar": 16.9,
+          "carbs": 17.3,
+          "protein": 1.9
+        }
+      ]
+    }
+  ]
+}

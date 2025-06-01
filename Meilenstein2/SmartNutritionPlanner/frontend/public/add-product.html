@@ -414,17 +414,16 @@
       card.innerHTML = `
         <span class="remove-icon" onclick="this.parentElement.remove()">➖</span>
         <h3>${product.name}</h3>
-        <div class="row"><span>Kcal/100g:</span><span>${product.kcal}</span></div>
-        <div class="row"><span class="result fat">Fett:</span><span>${product.fat}g</span></div>
-        <div class="row"><span class="result sugar">Zucker:</span><span>${product.sugar}g</span></div>
-        <div class="row"><span class="result carbs">KH:</span><span>${product.carbs}g</span></div>
-        <div class="row"><span class="result protein">Protein:</span><span>${product.protein}g</span></div>
         <div class="row">
           <span>Menge:</span>
           <span><input type="number" min="1" value="100"
             onchange="calculate(this, ${product.kcal}, ${product.fat}, ${product.sugar}, ${product.carbs}, ${product.protein})" /> g</span>
         </div>
-        <div class="row"><strong>Berechnet:</strong> <span class="result kcal">${Math.round(product.kcal)} kcal</span></div>
+        <div class="row"><span>Fett:</span><span class="result fat">${product.fat}g</span></div>
+        <div class="row"><span>Zucker:</span><span class="result sugar">${product.sugar}g</span></div>
+        <div class="row"><span>Kohlenhydrate:</span><span class="result carbs">${product.carbs}g</span></div>
+        <div class="row"><span>Protein:</span><span class="result protein">${product.protein}g</span></div>
+        <div class="row"><strong>Kcal gesamt:</strong> <span class="result kcal">${Math.round(product.kcal)} kcal</span></div>
       `;
       list.appendChild(card);
     }
@@ -435,16 +434,16 @@
     function calculate(input, kcalPer100, fatPer100, sugarPer100, carbsPer100, proteinPer100) {
       const g = parseFloat(input.value) || 0;
       const kcal = Math.round((kcalPer100 * g) / 100);
-      const fat = Math.round((fatPer100 * g) / 100);
-      const sugar = Math.round((sugarPer100 * g) / 100);
-      const carbs = Math.round((carbsPer100 * g) / 100);
-      const protein = Math.round((proteinPer100 * g) / 100);
+      const fat = parseFloat(((fatPer100 * g) / 100).toFixed(1));
+      const sugar = parseFloat(((sugarPer100 * g) / 100).toFixed(1));
+      const carbs = parseFloat(((carbsPer100 * g) / 100).toFixed(1));
+      const protein = parseFloat(((proteinPer100 * g) / 100).toFixed(1));
       const result = input.closest(".product-card");
       result.querySelector(".result.kcal").textContent = `${kcal} kcal`;
-      result.querySelector(".result.fat").textContent = `${fat} kcal`;
-      result.querySelector(".result.sugar").textContent = `${sugar} kcal`;
-      result.querySelector(".result.carbs").textContent = `${carbs} kcal`;
-      result.querySelector(".result.protein").textContent = `${protein} kcal`;
+      result.querySelector(".result.fat").textContent = `${fat} g`;
+      result.querySelector(".result.sugar").textContent = `${sugar} g`;
+      result.querySelector(".result.carbs").textContent = `${carbs} g`;
+      result.querySelector(".result.protein").textContent = `${protein} g`;
     }
 
     /**
@@ -469,7 +468,7 @@
       fetch("/api/daily-entries",{
         method: "POST",
         headers: { "Content-Type": "application/json"},
-        body: JSON.string
+        body: JSON.stringify(entries)
       })
       .then(res => {
         if (!res.ok) throw new Error("Fehler beim Speichern");
