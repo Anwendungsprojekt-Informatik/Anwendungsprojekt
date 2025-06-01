@@ -1,0 +1,1829 @@
+Meilenstein2\SmartNutritionPlanner\backend\api\openfoodfact.go
+package api
+
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"net/url"
+)
+
+// OpenFoodFactClient repräsentiert einen Client für die OpenFoodFacts API
+type OpenFoodFactClient struct {
+	BaseURL    string
+	HTTPClient *http.Client
+}
+
+// Product repräsentiert ein Lebensmittelprodukt aus der OpenFoodFacts API
+type Product struct {
+	ID              string `json:"id"`
+	Code            string `json:"code"`
+	ProductName     string `json:"product_name"`
+	Brands          string `json:"brands"`
+	ImageURL        string `json:"image_url"`
+	Ingredients     string `json:"ingredients_text"`
+	NutritionGrades string `json:"nutrition_grades"`
+	Quantity        string `json:"quantity"`
+}
+
+// SearchResponse repräsentiert die Antwort der OpenFoodFacts API bei einer Suche
+type SearchResponse struct {
+	Count    int       `json:"count"`
+	Page     int       `json:"page"`
+	PageSize int       `json:"page_size"`
+	Products []Product `json:"products"`
+}
+
+// NewOpenFoodFactClient erstellt einen neuen OpenFoodFacts API Client
+func NewOpenFoodFactClient() *OpenFoodFactClient {
+	return &OpenFoodFactClient{
+		BaseURL:    "https://world.openfoodfacts.org/api/v0",
+		HTTPClient: &http.Client{},
+	}
+}
+
+// GetProductByBarcode sucht ein Produkt anhand seines Barcodes
+func (c *OpenFoodFactClient) GetProductByBarcode(barcode string) (*Product, error) {
+	url := fmt.Sprintf("%s/product/%s.json", c.BaseURL, barcode)
+
+	resp, err := c.HTTPClient.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var result struct {
+		Product Product `json:"product"`
+		Status  int     `json:"status"`
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, err
+	}
+
+	if result.Status != 1 {
+		return nil, fmt.Errorf("product not found or API error")
+	}
+
+	return &result.Product, nil
+}
+
+// SearchProducts sucht Produkte anhand eines Suchbegriffs
+func (c *OpenFoodFactClient) SearchProducts(query string, page int) (*SearchResponse, error) {
+	if page < 1 {
+		page = 1
+	}
+
+	baseURL := "https://world.openfoodfacts.org/cgi/search.pl"
+	params := url.Values{}
+	params.Add("search_terms", query)
+	params.Add("json", "1")
+	params.Add("page", fmt.Sprintf("%d", page))
+	params.Add("page_size", "10")
+	params.Add("search_simple", "1")
+
+	fullURL := fmt.Sprintf("%s?%s", baseURL, params.Encode())
+
+	resp, err := c.HTTPClient.Get(fullURL)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var result SearchResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+----
+
+Meilenstein2\SmartNutritionPlanner\backend\go.mod
+module github.com/Anwendungsprojekt-Informatik/Anwendungsprojekt
+
+go 1.24.2
+
+require github.com/gin-gonic/gin v1.10.1
+
+require (
+	github.com/bytedance/sonic v1.13.2 // indirect
+	github.com/bytedance/sonic/loader v0.2.4 // indirect
+	github.com/cloudwego/base64x v0.1.5 // indirect
+	github.com/cloudwego/iasm v0.2.0 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.9 // indirect
+	github.com/gin-contrib/sse v1.1.0 // indirect
+	github.com/go-playground/locales v0.14.1 // indirect
+	github.com/go-playground/universal-translator v0.18.1 // indirect
+	github.com/go-playground/validator/v10 v10.26.0 // indirect
+	github.com/goccy/go-json v0.10.5 // indirect
+	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/klauspost/cpuid/v2 v2.2.10 // indirect
+	github.com/knz/go-libedit v1.10.1 // indirect
+	github.com/leodido/go-urn v1.4.0 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/modern-go/reflect2 v1.0.2 // indirect
+	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
+	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
+	github.com/ugorji/go/codec v1.2.14 // indirect
+	golang.org/x/arch v0.17.0 // indirect
+	golang.org/x/crypto v0.38.0 // indirect
+	golang.org/x/net v0.40.0 // indirect
+	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/text v0.25.0 // indirect
+	google.golang.org/protobuf v1.36.6 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
+)
+----
+
+Meilenstein2\SmartNutritionPlanner\backend\go.sum
+github.com/bytedance/sonic v1.11.6 h1:oUp34TzMlL+OY1OUWxHqsdkgC/Zfc85zGqw9siXjrc0=
+github.com/bytedance/sonic v1.11.6/go.mod h1:LysEHSvpvDySVdC2f87zGWf6CIKJcAvqab1ZaiQtds4=
+github.com/bytedance/sonic v1.13.2 h1:8/H1FempDZqC4VqjptGo14QQlJx8VdZJegxs6wwfqpQ=
+github.com/bytedance/sonic v1.13.2/go.mod h1:o68xyaF9u2gvVBuGHPlUVCy+ZfmNNO5ETf1+KgkJhz4=
+github.com/bytedance/sonic/loader v0.1.1 h1:c+e5Pt1k/cy5wMveRDyk2X4B9hF4g7an8N3zCYjJFNM=
+github.com/bytedance/sonic/loader v0.1.1/go.mod h1:ncP89zfokxS5LZrJxl5z0UJcsk4M4yY2JpfqGeCtNLU=
+github.com/bytedance/sonic/loader v0.2.4 h1:ZWCw4stuXUsn1/+zQDqeE7JKP+QO47tz7QCNan80NzY=
+github.com/bytedance/sonic/loader v0.2.4/go.mod h1:N8A3vUdtUebEY2/VQC0MyhYeKUFosQU6FxH2JmUe6VI=
+github.com/cloudwego/base64x v0.1.4 h1:jwCgWpFanWmN8xoIUHa2rtzmkd5J2plF/dnLS6Xd/0Y=
+github.com/cloudwego/base64x v0.1.4/go.mod h1:0zlkT4Wn5C6NdauXdJRhSKRlJvmclQ1hhJgA0rcu/8w=
+github.com/cloudwego/base64x v0.1.5 h1:XPciSp1xaq2VCSt6lF0phncD4koWyULpl5bUxbfCyP4=
+github.com/cloudwego/base64x v0.1.5/go.mod h1:0zlkT4Wn5C6NdauXdJRhSKRlJvmclQ1hhJgA0rcu/8w=
+github.com/cloudwego/iasm v0.2.0 h1:1KNIy1I1H9hNNFEEH3DVnI4UujN+1zjpuk6gwHLTssg=
+github.com/cloudwego/iasm v0.2.0/go.mod h1:8rXZaNYT2n95jn+zTI1sDr+IgcD2GVs0nlbbQPiEFhY=
+github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
+github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/gabriel-vasile/mimetype v1.4.3 h1:in2uUcidCuFcDKtdcBxlR0rJ1+fsokWf+uqxgUFjbI0=
+github.com/gabriel-vasile/mimetype v1.4.3/go.mod h1:d8uq/6HKRL6CGdk+aubisF/M5GcPfT7nKyLpA0lbSSk=
+github.com/gabriel-vasile/mimetype v1.4.9 h1:5k+WDwEsD9eTLL8Tz3L0VnmVh9QxGjRmjBvAG7U/oYY=
+github.com/gabriel-vasile/mimetype v1.4.9/go.mod h1:WnSQhFKJuBlRyLiKohA/2DtIlPFAbguNaG7QCHcyGok=
+github.com/gin-contrib/sse v0.1.0 h1:Y/yl/+YNO8GZSjAhjMsSuLt29uWRFHdHYUb5lYOV9qE=
+github.com/gin-contrib/sse v0.1.0/go.mod h1:RHrZQHXnP2xjPF+u1gW/2HnVO7nvIa9PG3Gm+fLHvGI=
+github.com/gin-contrib/sse v1.1.0 h1:n0w2GMuUpWDVp7qSpvze6fAu9iRxJY4Hmj6AmBOU05w=
+github.com/gin-contrib/sse v1.1.0/go.mod h1:hxRZ5gVpWMT7Z0B0gSNYqqsSCNIJMjzvm6fqCz9vjwM=
+github.com/gin-gonic/gin v1.10.0 h1:nTuyha1TYqgedzytsKYqna+DfLos46nTv2ygFy86HFU=
+github.com/gin-gonic/gin v1.10.0/go.mod h1:4PMNQiOhvDRa013RKVbsiNwoyezlm2rm0uX/T7kzp5Y=
+github.com/gin-gonic/gin v1.10.1 h1:T0ujvqyCSqRopADpgPgiTT63DUQVSfojyME59Ei63pQ=
+github.com/gin-gonic/gin v1.10.1/go.mod h1:4PMNQiOhvDRa013RKVbsiNwoyezlm2rm0uX/T7kzp5Y=
+github.com/go-playground/assert/v2 v2.2.0 h1:JvknZsQTYeFEAhQwI4qEt9cyV5ONwRHC+lYKSsYSR8s=
+github.com/go-playground/assert/v2 v2.2.0/go.mod h1:VDjEfimB/XKnb+ZQfWdccd7VUvScMdVu0Titje2rxJ4=
+github.com/go-playground/locales v0.14.1 h1:EWaQ/wswjilfKLTECiXz7Rh+3BjFhfDFKv/oXslEjJA=
+github.com/go-playground/locales v0.14.1/go.mod h1:hxrqLVvrK65+Rwrd5Fc6F2O76J/NuW9t0sjnWqG1slY=
+github.com/go-playground/universal-translator v0.18.1 h1:Bcnm0ZwsGyWbCzImXv+pAJnYK9S473LQFuzCbDbfSFY=
+github.com/go-playground/universal-translator v0.18.1/go.mod h1:xekY+UJKNuX9WP91TpwSH2VMlDf28Uj24BCp08ZFTUY=
+github.com/go-playground/validator/v10 v10.20.0 h1:K9ISHbSaI0lyB2eWMPJo+kOS/FBExVwjEviJTixqxL8=
+github.com/go-playground/validator/v10 v10.20.0/go.mod h1:dbuPbCMFw/DrkbEynArYaCwl3amGuJotoKCe95atGMM=
+github.com/go-playground/validator/v10 v10.26.0 h1:SP05Nqhjcvz81uJaRfEV0YBSSSGMc/iMaVtFbr3Sw2k=
+github.com/go-playground/validator/v10 v10.26.0/go.mod h1:I5QpIEbmr8On7W0TktmJAumgzX4CA1XNl4ZmDuVHKKo=
+github.com/goccy/go-json v0.10.2 h1:CrxCmQqYDkv1z7lO7Wbh2HN93uovUHgrECaO5ZrCXAU=
+github.com/goccy/go-json v0.10.2/go.mod h1:6MelG93GURQebXPDq3khkgXZkazVtN9CRI+MGFi0w8I=
+github.com/goccy/go-json v0.10.5 h1:Fq85nIqj+gXn/S5ahsiTlK3TmC85qgirsdTP/+DeaC4=
+github.com/goccy/go-json v0.10.5/go.mod h1:oq7eo15ShAhp70Anwd5lgX2pLfOS3QCiwU/PULtXL6M=
+github.com/google/go-cmp v0.5.5 h1:Khx7svrCpmxxtHBq5j2mp/xVjsi8hQMfNLvJFAlrGgU=
+github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
+github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
+github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHmT4TnhNGBo=
+github.com/klauspost/cpuid/v2 v2.0.9/go.mod h1:FInQzS24/EEf25PyTYn52gqo7WaD8xa0213Md/qVLRg=
+github.com/klauspost/cpuid/v2 v2.2.7 h1:ZWSB3igEs+d0qvnxR/ZBzXVmxkgt8DdzP6m9pfuVLDM=
+github.com/klauspost/cpuid/v2 v2.2.7/go.mod h1:Lcz8mBdAVJIBVzewtcLocK12l3Y+JytZYpaMropDUws=
+github.com/klauspost/cpuid/v2 v2.2.10 h1:tBs3QSyvjDyFTq3uoc/9xFpCuOsJQFNPiAhYdw2skhE=
+github.com/klauspost/cpuid/v2 v2.2.10/go.mod h1:hqwkgyIinND0mEev00jJYCxPNVRVXFQeu1XKlok6oO0=
+github.com/knz/go-libedit v1.10.1 h1:0pHpWtx9vcvC0xGZqEQlQdfSQs7WRlAjuPvk3fOZDCo=
+github.com/knz/go-libedit v1.10.1/go.mod h1:MZTVkCWyz0oBc7JOWP3wNAzd002ZbM/5hgShxwh4x8M=
+github.com/leodido/go-urn v1.4.0 h1:WT9HwE9SGECu3lg4d/dIA+jxlljEa1/ffXKmRjqdmIQ=
+github.com/leodido/go-urn v1.4.0/go.mod h1:bvxc+MVxLKB4z00jd1z+Dvzr47oO32F/QSNjSBOlFxI=
+github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWEY=
+github.com/mattn/go-isatty v0.0.20/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D7dTCTo3Y=
+github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421/go.mod h1:6dJC0mAP4ikYIbvyc7fijjWJddQyLn8Ig3JB5CqoB9Q=
+github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd h1:TRLaZ9cD/w8PVh93nsPXa1VrQ6jlwL5oN8l14QlcNfg=
+github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd/go.mod h1:6dJC0mAP4ikYIbvyc7fijjWJddQyLn8Ig3JB5CqoB9Q=
+github.com/modern-go/reflect2 v1.0.2 h1:xBagoLtFs94CBntxluKeaWgTMpvLxC4ur3nMaC9Gz0M=
+github.com/modern-go/reflect2 v1.0.2/go.mod h1:yWuevngMOJpCy52FWWMvUC8ws7m/LJsjYzDa0/r8luk=
+github.com/pelletier/go-toml/v2 v2.2.2 h1:aYUidT7k73Pcl9nb2gScu7NSrKCSHIDE89b3+6Wq+LM=
+github.com/pelletier/go-toml/v2 v2.2.2/go.mod h1:1t835xjRzz80PqgE6HHgN2JOsmgYu/h4qDAS4n929Rs=
+github.com/pelletier/go-toml/v2 v2.2.4 h1:mye9XuhQ6gvn5h28+VilKrrPoQVanw5PMw/TB0t5Ec4=
+github.com/pelletier/go-toml/v2 v2.2.4/go.mod h1:2gIqNv+qfxSVS7cM2xJQKtLSTLUE9V8t9Stt+h56mCY=
+github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
+github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
+github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
+github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=
+github.com/stretchr/objx v0.5.2/go.mod h1:FRsXN1f5AsAjCGJKqEizvkpNtU+EGNCLh3NxZ/8L+MA=
+github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
+github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
+github.com/stretchr/testify v1.7.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
+github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO+kdMU+MU=
+github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
+github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
+github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsTg=
+github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
+github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOfJA=
+github.com/twitchyliquid64/golang-asm v0.15.1 h1:SU5vSMR7hnwNxj24w34ZyCi/FmDZTkS4MhqMhdFk5YI=
+github.com/twitchyliquid64/golang-asm v0.15.1/go.mod h1:a1lVb/DtPvCB8fslRZhAngC2+aY1QWCk3Cedj/Gdt08=
+github.com/ugorji/go/codec v1.2.12 h1:9LC83zGrHhuUA9l16C9AHXAqEV/2wBQ4nkvumAE65EE=
+github.com/ugorji/go/codec v1.2.12/go.mod h1:UNopzCgEMSXjBc6AOMqYvWC1ktqTAfzJZUZgYf6w6lg=
+github.com/ugorji/go/codec v1.2.14 h1:yOQvXCBc3Ij46LRkRoh4Yd5qK6LVOgi0bYOXfb7ifjw=
+github.com/ugorji/go/codec v1.2.14/go.mod h1:UNopzCgEMSXjBc6AOMqYvWC1ktqTAfzJZUZgYf6w6lg=
+golang.org/x/arch v0.0.0-20210923205945-b76863e36670/go.mod h1:5om86z9Hs0C8fWVUuoMHwpExlXzs5Tkyp9hOrfG7pp8=
+golang.org/x/arch v0.8.0 h1:3wRIsP3pM4yUptoR96otTUOXI367OS0+c9eeRi9doIc=
+golang.org/x/arch v0.8.0/go.mod h1:FEVrYAQjsQXMVJ1nsMoVVXPZg6p2JE2mx8psSWTDQys=
+golang.org/x/arch v0.17.0 h1:4O3dfLzd+lQewptAHqjewQZQDyEdejz3VwgeYwkZneU=
+golang.org/x/arch v0.17.0/go.mod h1:bdwinDaKcfZUGpH09BB7ZmOfhalA8lQdzl62l8gGWsk=
+golang.org/x/crypto v0.23.0 h1:dIJU/v2J8Mdglj/8rJ6UUOM3Zc9zLZxVZwwxMooUSAI=
+golang.org/x/crypto v0.23.0/go.mod h1:CKFgDieR+mRhux2Lsu27y0fO304Db0wZe70UKqHu0v8=
+golang.org/x/crypto v0.38.0 h1:jt+WWG8IZlBnVbomuhg2Mdq0+BBQaHbtqHEFEigjUV8=
+golang.org/x/crypto v0.38.0/go.mod h1:MvrbAqul58NNYPKnOra203SB9vpuZW0e+RRZV+Ggqjw=
+golang.org/x/net v0.25.0 h1:d/OCCoBEUq33pjydKrGQhw7IlUPI2Oylr+8qLx49kac=
+golang.org/x/net v0.25.0/go.mod h1:JkAGAh7GEvH74S6FOH42FLoXpXbE/aqXSrIQjXgsiwM=
+golang.org/x/net v0.40.0 h1:79Xs7wF06Gbdcg4kdCCIQArK11Z1hr5POQ6+fIYHNuY=
+golang.org/x/net v0.40.0/go.mod h1:y0hY0exeL2Pku80/zKK7tpntoX23cqL3Oa6njdgRtds=
+golang.org/x/sys v0.5.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+golang.org/x/sys v0.20.0 h1:Od9JTbYCk261bKm4M/mw7AklTlFYIa0bIp9BgSm1S8Y=
+golang.org/x/sys v0.20.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
+golang.org/x/sys v0.33.0 h1:q3i8TbbEz+JRD9ywIRlyRAQbM0qF7hu24q3teo2hbuw=
+golang.org/x/sys v0.33.0/go.mod h1:BJP2sWEmIv4KK5OTEluFJCKSidICx8ciO85XgH3Ak8k=
+golang.org/x/text v0.15.0 h1:h1V/4gjBv8v9cjcR6+AR5+/cIYK5N/WAgiv4xlsEtAk=
+golang.org/x/text v0.15.0/go.mod h1:18ZOQIKpY8NJVqYksKHtTdi31H5itFRjB5/qKTNYzSU=
+golang.org/x/text v0.25.0 h1:qVyWApTSYLk/drJRO5mDlNYskwQznZmkpV2c8q9zls4=
+golang.org/x/text v0.25.0/go.mod h1:WEdwpYrmk1qmdHvhkSTNPm3app7v4rsT8F2UD6+VHIA=
+golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543 h1:E7g+9GITq07hpfrRu66IVDexMakfv52eLZ2CXBWiKr4=
+golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
+google.golang.org/protobuf v1.34.1 h1:9ddQBjfCyZPOHPUiPxpYESBLc+T8P3E+Vo4IbKZgFWg=
+google.golang.org/protobuf v1.34.1/go.mod h1:c6P6GXX6sHbq/GpV6MGZEdwhWPcYBgnhAHhKbcUYpos=
+google.golang.org/protobuf v1.36.6 h1:z1NpPI8ku2WgiWnf+t9wTPsn6eP1L7ksHUlkfLvd9xY=
+google.golang.org/protobuf v1.36.6/go.mod h1:jduwjTPXsFjZGTmRluh+L6NjiWu7pchiJ2/5YcXBHnY=
+gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
+gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
+gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
+gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
+nullprogram.com/x/optparse v1.0.0/go.mod h1:KdyPE+Igbe0jQUrVfMqDMeJQIJZEuyV7pjYmp6pbG50=
+rsc.io/pdf v0.1.1/go.mod h1:n8OzWcQ6Sp37PL01nO98y4iUCRdTGarVfzxY20ICaU4=
+----
+
+Meilenstein2\SmartNutritionPlanner\backend\main.go
+package main
+
+import (
+	"net/http"
+	"strconv"
+
+	"github.com/Anwendungsprojekt-Informatik/Anwendungsprojekt/api"
+	"github.com/gin-gonic/gin"
+)
+
+func main() {
+	// Erstelle den OpenFoodFacts Client
+	client := api.NewOpenFoodFactClient()
+
+	// Initialisiere den Gin Router
+	router := gin.Default()
+
+	// Stelle statische Dateien zur Verfügung (für das HTML-Frontend)
+	router.Static("/public", "../frontend/public")
+
+	// API-Endpunkte
+	api := router.Group("/api")
+	{
+		// Endpunkt für die Suche nach Produkten
+		api.GET("/search", func(c *gin.Context) {
+			query := c.Query("q")
+			pageStr := c.DefaultQuery("page", "1")
+
+			page, err := strconv.Atoi(pageStr)
+			if err != nil || page < 1 {
+				page = 1
+			}
+
+			if query == "" {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Query parameter 'q' is required"})
+				return
+			}
+
+			results, err := client.SearchProducts(query, page)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+
+			c.JSON(http.StatusOK, results)
+		})
+
+		// Endpunkt für die Suche nach einem Produkt anhand des Barcodes
+		api.GET("/product/:barcode", func(c *gin.Context) {
+			barcode := c.Param("barcode")
+
+			if barcode == "" {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Barcode is required"})
+				return
+			}
+
+			product, err := client.GetProductByBarcode(barcode)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+
+			c.JSON(http.StatusOK, product)
+		})
+	}
+
+	router.GET("/", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/public/index.html")
+	})
+
+	// Server starten
+	router.Run(":8080")
+}
+----
+
+Meilenstein2\SmartNutritionPlanner\frontend\public\account.html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Konto</title>
+  <style>
+    :root {
+      --primary: #4CAF50;
+      --bg: #f4f4f4;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--bg);
+      color: #333;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .menu-icon {
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -70%;
+      width: 70%;
+      height: 100%;
+      background-color: #333;
+      color: white;
+      padding: 2rem 1rem;
+      transition: left 0.3s ease-in-out;
+      z-index: 1000;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar nav a {
+      display: block;
+      color: white;
+      padding: 1rem 0;
+      text-decoration: none;
+      border-bottom: 1px solid #555;
+    }
+
+    .section {
+      padding: 1.5rem;
+    }
+
+    .user-icon {
+      font-size: 3rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .field {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 0.3rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .btn-row button {
+      flex: 1;
+      padding: 0.7rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      color: white;
+    }
+
+    .btn-edit {
+      background-color: #888;
+    }
+
+    .btn-save {
+      background-color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <nav>
+      <a href="/public/index.html">Home</a>
+      <a href="/public/add-product.html">Artikel hinzufügen</a>
+      <a href="/public/recipes.html">Rezepte</a>
+      <a href="/public/create-recipe.html">Rezept erstellen</a>
+      <a href="/public/shopping-list.html">Einkaufsliste</a>
+      <a href="/public/info.html">Infoseite</a>
+      <a href="/public/account.html">Konto</a>
+    </nav>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <span class="menu-icon" onclick="toggleMenu()">☰</span>
+    <h2>Mein Konto</h2>
+  </header>
+
+  <!-- Inhalt -->
+  <div class="section">
+    <div class="user-icon">👤</div>
+
+    <div class="field">
+      <label>Vorname & Nachname</label>
+      <input type="text" id="name" disabled>
+    </div>
+
+    <div class="field">
+      <label>Alter</label>
+      <input type="number" id="age" disabled>
+    </div>
+
+    <div class="field">
+      <label>Geschlecht</label>
+      <select id="gender" disabled>
+        <option value="">Bitte wählen</option>
+        <option value="m">Männlich</option>
+        <option value="w">Weiblich</option>
+        <option value="d">Divers</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Größe (cm)</label>
+      <input type="number" id="height" disabled>
+    </div>
+
+    <div class="field">
+      <label>Gewicht (kg)</label>
+      <input type="number" id="weight" disabled>
+    </div>
+
+    <div class="field">
+      <label>Kcal-Ziel pro Tag</label>
+      <input type="number" id="kcalTarget" disabled>
+    </div>
+
+    <div class="field">
+      <label>Ernährungsart</label>
+      <select id="dietType" disabled>
+        <option value="">Bitte wählen</option>
+        <option>Vegan</option>
+        <option>Vegetarisch</option>
+        <option>Flexitarisch</option>
+        <option>Omnivor</option>
+        <option>Andere</option>
+      </select>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-edit" onclick="toggleEdit()">✏️ Bearbeiten</button>
+      <button class="btn-save" onclick="saveData()">💾 Speichern</button>
+    </div>
+  </div>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById("sidebar").classList.toggle("active");
+    }
+
+    function toggleEdit() {
+      const fields = document.querySelectorAll("input, select");
+      fields.forEach(f => f.disabled = !f.disabled);
+    }
+
+    function saveData() {
+      const userData = {
+        name: document.getElementById("name").value,
+        age: document.getElementById("age").value,
+        gender: document.getElementById("gender").value,
+        height: document.getElementById("height").value,
+        weight: document.getElementById("weight").value,
+        kcalTarget: document.getElementById("kcalTarget").value,
+        dietType: document.getElementById("dietType").value
+      };
+      localStorage.setItem("userData", JSON.stringify(userData));
+      alert("Daten gespeichert!");
+    }
+
+    function loadData() {
+      const data = JSON.parse(localStorage.getItem("userData") || "{}");
+      if (!data) return;
+
+      document.getElementById("name").value = data.name || "";
+      document.getElementById("age").value = data.age || "";
+      document.getElementById("gender").value = data.gender || "";
+      document.getElementById("height").value = data.height || "";
+      document.getElementById("weight").value = data.weight || "";
+      document.getElementById("kcalTarget").value = data.kcalTarget || "";
+      document.getElementById("dietType").value = data.dietType || "";
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
+
+----
+
+Meilenstein2\SmartNutritionPlanner\frontend\public\add-product.html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Produkt hinzufügen</title>
+  <style>
+    :root {
+      --primary: #4CAF50;
+      --danger: #d32f2f;
+      --bg: #f4f4f4;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--bg);
+      color: #333;
+      padding-bottom: 120px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .menu-icon {
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -70%;
+      width: 70%;
+      height: 100%;
+      background-color: #333;
+      color: white;
+      padding: 2rem 1rem;
+      transition: left 0.3s ease-in-out;
+      z-index: 1000;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar nav a {
+      display: block;
+      color: white;
+      padding: 1rem 0;
+      text-decoration: none;
+      border-bottom: 1px solid #555;
+    }
+
+    .search-section {
+      display: flex;
+      padding: 1rem;
+      gap: 0.5rem;
+    }
+
+    .search-section input {
+      flex: 1;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .search-section button {
+      background: var(--primary);
+      border: none;
+      padding: 0.5rem 0.8rem;
+      border-radius: 5px;
+      color: white;
+      font-size: 1.2rem;
+    }
+
+    .icon-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.3rem;
+    }
+
+    .card-list {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .section-title {
+      font-weight: bold;
+      margin: 1rem 1rem 0.3rem;
+      font-size: 1.1rem;
+    }
+
+    .product-card {
+      background: white;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .product-card h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+    }
+
+    .product-card .row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      margin: 2px 0;
+    }
+
+    .product-card input[type="number"] {
+      width: 60px;
+      padding: 0.3rem;
+      font-size: 0.9rem;
+      margin-left: 5px;
+    }
+
+    .remove-icon {
+      display: none;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 1.3rem;
+      color: var(--danger);
+      cursor: pointer;
+    }
+
+    .remove-mode .remove-icon {
+      display: block;
+    }
+
+    .add-button-small {
+      display: inline-block;
+      margin-top: 0.5rem;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.9rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <nav>
+      <a href="/public/index.html">Home</a>
+      <a href="/public/add-product.html">Artikel hinzufügen</a>
+      <a href="/public/recipes.html">Rezepte</a>
+      <a href="/public/create-recipe.html">Rezept erstellen</a>
+      <a href="/public/shopping-list.html">Einkaufsliste</a>
+      <a href="/public/info.html">Infoseite</a>
+      <a href="/public/account.html">Konto</a>
+    </nav>
+  </div>
+
+  <!-- HEADER -->
+  <header>
+    <span class="menu-icon" onclick="toggleMenu()">☰</span>
+    <h2>Produkt hinzufügen</h2>
+    <button class="icon-button" onclick="toggleDeleteMode()" title="Löschen aktivieren/deaktivieren">🗑️</button>
+  </header>
+
+  <!-- SUCHE -->
+  <div class="search-section">
+    <input type="text" id="searchInput" placeholder="Produktname eingeben…" />
+    <button onclick="byBarcode()">🔍</button>
+  </div>
+
+  <!-- SUCHERGEBNISSE -->
+  <div class="section-title">Suchergebnisse</div>
+  <div class="card-list" id="searchResults"></div>
+
+  <!-- EIGENE PRODUKTLISTE -->
+  <div class="section-title">Ausgewählte Produkte</div>
+  <div class="card-list" id="productList"></div>
+
+  <script>
+    let deleteMode = false;
+
+    function toggleMenu() {
+      document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    function toggleDeleteMode() {
+      deleteMode = !deleteMode;
+      document.body.classList.toggle("remove-mode", deleteMode);
+    }
+
+    async function byBarcode() {
+    const bc = document.getElementById("barcode").value.trim();
+    if (!bc) return;
+
+    const res = await fetch(`/api/product/${encodeURIComponent(bc)}`);
+    if (!res.ok) {
+      document.getElementById("detail").textContent = "Nicht gefunden oder Fehler";
+      return;
+    }
+
+    const prod = await res.json();
+    console.log(prod);
+    document.getElementById("detail").textContent = JSON.stringify(prod, null, 2);
+  }
+
+    function addToList(product) {
+      const list = document.getElementById("productList");
+
+      const card = document.createElement("div");
+      card.className = "product-card";
+      card.innerHTML = `
+        <span class="remove-icon" onclick="this.parentElement.remove()">➖</span>
+        <h3>${product.name}</h3>
+        <div class="row"><span>Kcal/100g:</span><span>${product.kcal}</span></div>
+        <div class="row"><span>Fett:</span><span>${product.fat}g</span></div>
+        <div class="row"><span>Zucker:</span><span>${product.sugar}g</span></div>
+        <div class="row"><span>KH:</span><span>${product.carbs}g</span></div>
+        <div class="row"><span>Protein:</span><span>${product.protein}g</span></div>
+        <div class="row">
+          <span>Menge:</span>
+          <span><input type="number" min="1" value="100" onchange="calculate(this, ${product.kcal})" /> g</span>
+        </div>
+        <div class="row"><strong>Berechnet:</strong> <span class="result">${Math.round(product.kcal)} kcal</span></div>
+      `;
+      list.appendChild(card);
+    }
+
+    function calculate(input, kcalPer100) {
+      const g = parseFloat(input.value) || 0;
+      const kcal = Math.round((kcalPer100 * g) / 100);
+      const result = input.closest(".product-card").querySelector(".result");
+      result.textContent = `${kcal} kcal`;
+    }
+  </script>
+
+</body>
+</html>
+
+----
+
+Meilenstein2\SmartNutritionPlanner\frontend\public\create-recipe.html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rezept erstellen</title>
+  <style>
+    :root {
+      --primary: #4CAF50;
+      --danger: #d32f2f;
+      --bg: #f4f4f4;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--bg);
+      color: #333;
+      padding-bottom: 150px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .menu-icon {
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -70%;
+      width: 70%;
+      height: 100%;
+      background-color: #333;
+      color: white;
+      padding: 2rem 1rem;
+      transition: left 0.3s ease-in-out;
+      z-index: 1000;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar nav a {
+      display: block;
+      color: white;
+      padding: 1rem 0;
+      text-decoration: none;
+      border-bottom: 1px solid #555;
+    }
+
+    .icon-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.3rem;
+    }
+
+    .section {
+      padding: 1rem;
+    }
+
+    .section input[type="text"] {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .search {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .search input {
+      flex: 1;
+      padding: 0.5rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .search button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.5rem 0.8rem;
+      border-radius: 5px;
+      font-size: 1.2rem;
+    }
+
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .product-card {
+      background: white;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .product-card h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      margin: 2px 0;
+    }
+
+    .product-card input[type="number"] {
+      width: 60px;
+    }
+
+    .remove-icon {
+      display: none;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 1.3rem;
+      color: var(--danger);
+      cursor: pointer;
+    }
+
+    .remove-mode .remove-icon {
+      display: block;
+    }
+
+    .save-button {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 1rem 2rem;
+      background: var(--primary);
+      color: white;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .add-button-small {
+      display: inline-block;
+      margin-top: 0.5rem;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.9rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .section-title {
+      font-weight: bold;
+      font-size: 1rem;
+      margin: 1rem 0 0.3rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <nav>
+      <a href="/public/index.html">Home</a>
+      <a href="/public/add-product.html">Artikel hinzufügen</a>
+      <a href="/public/recipes.html">Rezepte</a>
+      <a href="/public/create-recipe.html">Rezept erstellen</a>
+      <a href="/public/shopping-list.html">Einkaufsliste</a>
+      <a href="/public/info.html">Infoseite</a>
+      <a href="/public/account.html">Konto</a>
+    </nav>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <span class="menu-icon" onclick="toggleMenu()">☰</span>
+    <h2>Rezept erstellen</h2>
+    <button class="icon-button" onclick="toggleDeleteMode()">🗑️</button>
+  </header>
+
+  <div class="section">
+    <label for="recipeName"><strong>Rezeptname:</strong></label>
+    <input type="text" id="recipeName" placeholder="z. B. Protein Porridge" />
+
+    <div class="search">
+      <input type="text" id="searchInput" placeholder="Produkt suchen…" />
+      <button onclick="searchProduct()">🔍</button>
+    </div>
+
+    <div class="section-title">Produkte im Rezept</div>
+    <div class="card-list" id="productList"></div>
+  </div>
+
+  <button class="save-button" onclick="saveRecipe()">💾 Speichern</button>
+
+  <script>
+    let deleteMode = false;
+
+    function toggleMenu() {
+      document.getElementById("sidebar").classList.toggle("active");
+    }
+
+    function toggleDeleteMode() {
+      deleteMode = !deleteMode;
+      document.body.classList.toggle("remove-mode", deleteMode);
+    }
+
+    function searchProduct() {
+      const query = document.getElementById("searchInput").value.trim();
+      if (!query) return;
+
+      fetch(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1`)
+        .then(res => res.json())
+        .then(data => {
+          const product = data.products[0];
+          if (!product) return alert("Kein Produkt gefunden");
+
+          const name = product.product_name || "Unbenannt";
+          const n = product.nutriments || {};
+          const kcal = parseFloat(n['energy-kcal_100g']) || 0;
+          const fat = parseFloat(n['fat_100g']) || 0;
+          const sugar = parseFloat(n['sugars_100g']) || 0;
+          const carbs = parseFloat(n['carbohydrates_100g']) || 0;
+          const protein = parseFloat(n['proteins_100g']) || 0;
+
+          const card = document.createElement("div");
+          card.className = "product-card";
+          card.innerHTML = `
+            <span class="remove-icon" onclick="this.parentElement.remove()">➖</span>
+            <h3>${name}</h3>
+            <div class="row"><span>Kcal/100g:</span><span>${kcal}</span></div>
+            <div class="row"><span>Fett:</span><span>${fat}g</span></div>
+            <div class="row"><span>Zucker:</span><span>${sugar}g</span></div>
+            <div class="row"><span>Kohlenhydrate:</span><span>${carbs}g</span></div>
+            <div class="row"><span>Protein:</span><span>${protein}g</span></div>
+            <div class="row">
+              <span>Menge:</span>
+              <span><input type="number" min="1" value="100" onchange="calculate(this, ${kcal})" /> g</span>
+            </div>
+            <div class="row"><strong>Berechnet:</strong> <span class="result">${Math.round(kcal)} kcal</span></div>
+          `;
+          document.getElementById("productList").appendChild(card);
+        })
+        .catch(err => {
+          console.error("API-Fehler:", err);
+        });
+    }
+
+    function calculate(input, kcalPer100) {
+      const g = parseFloat(input.value) || 0;
+      const kcal = Math.round((kcalPer100 * g) / 100);
+      const result = input.closest(".product-card").querySelector(".result");
+      result.textContent = `${kcal} kcal`;
+    }
+
+    function saveRecipe() {
+      const name = document.getElementById("recipeName").value.trim();
+      if (!name) return alert("Bitte Rezeptname eingeben.");
+
+      const cards = document.querySelectorAll(".product-card");
+      if (cards.length === 0) return alert("Bitte mindestens ein Produkt hinzufügen.");
+
+      const products = Array.from(cards).map(card => {
+        return {
+          name: card.querySelector("h3").textContent,
+          kcal: card.querySelector(".result").textContent,
+        };
+      });
+
+      const newRecipe = {
+        name,
+        products,
+        timestamp: Date.now()
+      };
+
+      const existing = JSON.parse(localStorage.getItem("ownRecipes") || "[]");
+      existing.push(newRecipe);
+      localStorage.setItem("ownRecipes", JSON.stringify(existing));
+
+      alert("Rezept gespeichert!");
+      window.location.href = "recipes.html";
+    }
+  </script>
+</body>
+</html>
+
+----
+
+Meilenstein2\SmartNutritionPlanner\frontend\public\index.html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SmartNutrition - Home</title>
+  <style>
+    :root {
+      --primary: #4CAF50;
+      --bg: #f4f4f4;
+      --danger: #d32f2f;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: #333;
+      padding-bottom: 80px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .menu-icon {
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -70%;
+      width: 70%;
+      height: 100%;
+      background-color: #333;
+      color: white;
+      padding: 2rem 1rem;
+      transition: left 0.3s ease-in-out;
+      z-index: 1000;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar nav a {
+      display: block;
+      color: white;
+      padding: 1rem 0;
+      text-decoration: none;
+      border-bottom: 1px solid #555;
+    }
+
+    .content {
+      padding: 1.5rem;
+      max-width: 500px;
+      margin: auto;
+    }
+
+    .circle {
+      width: 60vw;
+      max-width: 250px;
+      aspect-ratio: 1/1;
+      border-radius: 50%;
+      background: conic-gradient(var(--primary) 65%, #ddd 0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 2rem auto;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #222;
+    }
+
+    .nutrient-bar {
+      margin: 1rem 0;
+    }
+
+    .nutrient-bar label {
+      display: block;
+      margin-bottom: 0.2rem;
+      font-weight: bold;
+    }
+
+    .bar-bg {
+      background: #ddd;
+      height: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 50%;
+      background-color: var(--primary);
+      transition: width 0.3s;
+    }
+
+    .warning {
+      background: #ffebee;
+      color: var(--danger);
+      padding: 1rem;
+      border-left: 5px solid var(--danger);
+      margin-top: 2rem;
+      display: none;
+    }
+
+    .add-button {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background-color: var(--primary);
+      color: white;
+      font-size: 2rem;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    @media (max-width: 400px) {
+      .circle {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="menu-icon" onclick="toggleMenu()">☰</span>
+    <h1 style="margin-left: 1rem; font-size: 1.2rem;">SmartNutrition</h1>
+  </header>
+
+  <div class="sidebar" id="sidebar">
+    <nav>
+      <a href="/public/index.html">Home</a>
+      <a href="/public/add-product.html">Artikel hinzufügen</a>
+      <a href="/public/recipes.html">Rezepte</a>
+      <a href="/public/create-recipe.html">Rezept erstellen</a>
+      <a href="/public/shopping-list.html">Einkaufsliste</a>
+      <a href="/public/info.html">Infoseite</a>
+      <a href="/public/account.html">Konto</a>
+    </nav>
+  </div>
+
+  <div class="content">
+    <div class="circle" id="calorieCircle">
+      1400 kcal übrig
+    </div>
+
+    <div class="nutrient-bar">
+      <label>Fette</label>
+      <div class="bar-bg">
+        <div class="bar-fill" style="width: 60%;"></div>
+      </div>
+    </div>
+
+    <div class="nutrient-bar">
+      <label>Zucker</label>
+      <div class="bar-bg">
+        <div class="bar-fill" style="width: 45%;"></div>
+      </div>
+    </div>
+
+    <div class="nutrient-bar">
+      <label>Kohlenhydrate</label>
+      <div class="bar-bg">
+        <div class="bar-fill" style="width: 70%;"></div>
+      </div>
+    </div>
+
+    <div class="nutrient-bar">
+      <label>Protein</label>
+      <div class="bar-bg">
+        <div class="bar-fill" style="width: 35%;"></div>
+      </div>
+    </div>
+
+    <div class="warning" id="warningBox">
+      ⚠️ Du hast dein Zuckerlimit überschritten!
+    </div>
+  </div>
+
+  <a href="add-product.html" class="add-button">+</a>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    // Beispiel: zeige Warnung wenn ein Nährwert überschritten ist
+    const showWarning = true; // ← dynamisch später ersetzen
+    if (showWarning) {
+      document.getElementById('warningBox').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
+----
+
+Meilenstein2\SmartNutritionPlanner\frontend\public\info.html
+
+----
+
+Meilenstein2\SmartNutritionPlanner\frontend\public\recipes.html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rezepte</title>
+  <style>
+    :root {
+      --primary: #4CAF50;
+      --danger: #d32f2f;
+      --bg: #f4f4f4;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--bg);
+      color: #333;
+      padding-bottom: 100px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .menu-icon {
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -70%;
+      width: 70%;
+      height: 100%;
+      background-color: #333;
+      color: white;
+      padding: 2rem 1rem;
+      transition: left 0.3s ease-in-out;
+      z-index: 1000;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar nav a {
+      display: block;
+      color: white;
+      padding: 1rem 0;
+      text-decoration: none;
+      border-bottom: 1px solid #555;
+    }
+
+    .icon-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.3rem;
+    }
+
+    .section-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin: 1rem 1rem 0.3rem;
+    }
+
+    .card-list {
+      padding: 0 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .recipe-card {
+      background: white;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .recipe-card h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+    }
+
+    .recipe-card .row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      margin: 2px 0;
+    }
+
+    .remove-icon {
+      display: none;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 1.3rem;
+      color: var(--danger);
+      cursor: pointer;
+    }
+
+    .remove-mode .remove-icon {
+      display: block;
+    }
+
+    .add-button {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background-color: var(--primary);
+      color: white;
+      font-size: 2rem;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <nav>
+      <a href="/public/index.html">Home</a>
+      <a href="/public/add-product.html">Artikel hinzufügen</a>
+      <a href="/public/recipes.html">Rezepte</a>
+      <a href="/public/create-recipe.html">Rezept erstellen</a>
+      <a href="/public/shopping-list.html">Einkaufsliste</a>
+      <a href="/public/info.html">Infoseite</a>
+      <a href="/public/account.html">Konto</a>
+    </nav>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <span class="menu-icon" onclick="toggleMenu()">☰</span>
+    <h2>Rezepte</h2>
+    <button class="icon-button" onclick="toggleDeleteMode()">🗑️</button>
+  </header>
+
+  <!-- Empfohlene Rezepte -->
+  <div class="section-title">Empfohlene Rezepte</div>
+  <div class="card-list" id="recommendedRecipes">
+    <div class="recipe-card">
+      <h3>Grüner Smoothie</h3>
+      <div class="row"><span>Kcal:</span><span>320</span></div>
+      <div class="row"><span>Fett:</span><span>4g</span></div>
+      <div class="row"><span>Zucker:</span><span>18g</span></div>
+      <div class="row"><span>Protein:</span><span>6g</span></div>
+    </div>
+    <div class="recipe-card">
+      <h3>Tofu-Bowl</h3>
+      <div class="row"><span>Kcal:</span><span>540</span></div>
+      <div class="row"><span>Fett:</span><span>12g</span></div>
+      <div class="row"><span>Zucker:</span><span>6g</span></div>
+      <div class="row"><span>Protein:</span><span>24g</span></div>
+    </div>
+  </div>
+
+  <!-- Eigene Rezepte -->
+  <div class="section-title">Meine Rezepte</div>
+  <div class="card-list" id="ownRecipes"></div>
+
+  <!-- + Button -->
+  <a href="create-recipe.html" class="add-button">+</a>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById("sidebar").classList.toggle("active");
+    }
+
+    function toggleDeleteMode() {
+      document.body.classList.toggle("remove-mode");
+    }
+
+    function loadOwnRecipes() {
+      const container = document.getElementById("ownRecipes");
+      const data = JSON.parse(localStorage.getItem("ownRecipes") || "[]");
+      container.innerHTML = "";
+
+      data.forEach((recipe, index) => {
+        const card = document.createElement("div");
+        card.className = "recipe-card";
+        card.innerHTML = `
+          <span class="remove-icon" onclick="removeRecipe(${index})">➖</span>
+          <h3>${recipe.name}</h3>
+          ${recipe.products.map(p => `<div class="row"><span>${p.name}:</span><span>${p.kcal}</span></div>`).join('')}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function removeRecipe(index) {
+      const data = JSON.parse(localStorage.getItem("ownRecipes") || "[]");
+      data.splice(index, 1);
+      localStorage.setItem("ownRecipes", JSON.stringify(data));
+      loadOwnRecipes();
+    }
+
+    // Init
+    loadOwnRecipes();
+  </script>
+</body>
+</html>
+----
+
+Meilenstein2\SmartNutritionPlanner\frontend\public\recipes.json
+
+----
+
+Meilenstein2\SmartNutritionPlanner\frontend\public\shopping-list.html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Einkaufsliste</title>
+  <style>
+    :root {
+      --primary: #4CAF50;
+      --danger: #d32f2f;
+      --bg: #f4f4f4;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--bg);
+      color: #333;
+      padding-bottom: 120px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .menu-icon {
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -70%;
+      width: 70%;
+      height: 100%;
+      background-color: #333;
+      color: white;
+      padding: 2rem 1rem;
+      transition: left 0.3s ease-in-out;
+      z-index: 1000;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar nav a {
+      display: block;
+      color: white;
+      padding: 1rem 0;
+      text-decoration: none;
+      border-bottom: 1px solid #555;
+    }
+
+    .section {
+      padding: 1rem;
+    }
+
+    .add-area {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .add-area input {
+      flex: 1;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .add-area button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 1rem;
+    }
+
+    li {
+      padding: 0.7rem;
+      background: white;
+      border-radius: 5px;
+      margin-bottom: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    li.checked {
+      text-decoration: line-through;
+      color: gray;
+      background-color: #e0e0e0;
+    }
+
+    .btn-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .btn-row button {
+      flex: 1;
+      padding: 0.8rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      color: white;
+    }
+
+    .btn-clear {
+      background-color: var(--danger);
+    }
+
+    .btn-save {
+      background-color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <nav>
+      <a href="/public/index.html">Home</a>
+      <a href="/public/add-product.html">Artikel hinzufügen</a>
+      <a href="/public/recipes.html">Rezepte</a>
+      <a href="/public/create-recipe.html">Rezept erstellen</a>
+      <a href="/public/shopping-list.html">Einkaufsliste</a>
+      <a href="/public/info.html">Infoseite</a>
+      <a href="/public/account.html">Konto</a>
+    </nav>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <span class="menu-icon" onclick="toggleMenu()">☰</span>
+    <h2>Einkaufsliste</h2>
+  </header>
+
+  <!-- Main Section -->
+  <div class="section">
+    <div class="add-area">
+      <input type="text" id="itemInput" placeholder="Neues Produkt eingeben…" />
+      <button onclick="addItem()">➕</button>
+    </div>
+
+    <ul id="shoppingList"></ul>
+
+    <div class="btn-row">
+      <button class="btn-clear" onclick="clearList()">🗑️ Löschen</button>
+      <button class="btn-save" onclick="saveList()">💾 Speichern</button>
+    </div>
+  </div>
+
+  <script>
+    const listElement = document.getElementById("shoppingList");
+
+    function toggleMenu() {
+      document.getElementById("sidebar").classList.toggle("active");
+    }
+
+    function addItem() {
+      const input = document.getElementById("itemInput");
+      const value = input.value.trim();
+      if (!value) return;
+
+      const li = document.createElement("li");
+      li.textContent = value;
+      li.onclick = () => li.classList.toggle("checked");
+      listElement.appendChild(li);
+      input.value = "";
+    }
+
+    function clearList() {
+      if (confirm("Liste wirklich löschen?")) {
+        listElement.innerHTML = "";
+        localStorage.removeItem("shoppingList");
+      }
+    }
+
+    function saveList() {
+      const items = Array.from(listElement.children).map(li => ({
+        text: li.textContent,
+        checked: li.classList.contains("checked")
+      }));
+      localStorage.setItem("shoppingList", JSON.stringify(items));
+      alert("Liste gespeichert!");
+    }
+
+    function loadList() {
+      const data = JSON.parse(localStorage.getItem("shoppingList") || "[]");
+      data.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item.text;
+        if (item.checked) li.classList.add("checked");
+        li.onclick = () => li.classList.toggle("checked");
+        listElement.appendChild(li);
+      });
+    }
+
+    // Beim Laden ausführen
+    loadList();
+  </script>
+</body>
+</html>

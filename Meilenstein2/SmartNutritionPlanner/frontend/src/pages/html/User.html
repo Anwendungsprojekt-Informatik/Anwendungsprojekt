@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Handy-Vorschau</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+      background-color: #f4f4f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #333;
+    }
+
+    .phone-frame {
+      width: 390px;
+      height: 844px;
+      background-color: #ffffff;
+      border-radius: 40px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background: linear-gradient(135deg, #ffffff, #f0f0f0);
+    }
+
+    .phone-notch {
+      width: 120px;
+      height: 30px;
+      background-color: #333;
+      border-radius: 0 0 20px 20px;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+    }
+
+    .phone-content {
+      padding: 30px;
+      margin-top: 40px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    h1 {
+      text-align: center;
+      color: #222;
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+    }
+
+    .user-content {
+      display: grid;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .user-content p {
+      font-size: 1rem;
+      color: #555;
+    }
+
+    .user-content input {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-content input:focus {
+      outline: none;
+      border-color: #4a90e2;
+      box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    #konto-icon {
+      width: 70px;
+      height: 70px;
+      margin-left: 120px;
+    }
+
+    #bearbeiten-icon {
+      width: 35px;
+      height: 35px;
+      margin-left: 50px;
+      margin-bottom: 25px;
+    }
+
+    #Home-icon {
+      width: 50px;
+      height: 50px;
+      margin-top: 40px;
+      margin-left: 140px;
+      cursor: pointer;
+    }
+
+    #Home-icon:hover {
+      transform: scale(1.1);
+      transition: 0.2s ease-in-out;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="phone-notch"></div>
+  <div class="phone-content">
+    <img id="konto-icon" src="https://cdn-icons-png.flaticon.com/512/2354/2354573.png" alt="konto-Icon">
+    <img id="bearbeiten-icon" src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" alt="bearbeiten-Icon">
+    <h1>Name: User Name</h1>
+
+    <div class="user-content">
+      <p>Gewicht: <input type="number" placeholder="kg"></input></p>
+      <p>Geschlecht: <input type="text" placeholder="Geschlecht"></input></p>
+      <p>Alter: <input type="number" placeholder="Alter"></input></p>
+      <p>Größe: <input type="number" placeholder="cm"></input></p>
+      <p>Kcal Ziel: <input type="number" placeholder="Kcal Ziel"></input></p>
+      <p>Ernährungsart: <input type="text" placeholder="Ernährungsart"></input></p>
+    </div>
+
+    <a href="Home.html">
+      <img id="Home-icon" src="https://cdn-icons-png.flaticon.com/512/1946/1946488.png" alt="Home-icon">
+    </a>
+  </div>
+</div>
+
+</body>
+</html>

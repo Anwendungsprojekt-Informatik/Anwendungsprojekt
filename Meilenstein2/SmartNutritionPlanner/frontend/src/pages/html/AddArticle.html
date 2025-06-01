@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Handy-Vorschau</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      background-color: #e0e0e0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .phone-frame {
+      width: 390px;
+      height: 844px;
+      background-color: #ffffff;
+      border: 16px solid #000000;
+      border-radius: 40px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .phone-notch {
+      width: 120px;
+      height: 30px;
+      background-color: #000;
+      border-radius: 0 0 20px 20px;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+    }
+
+    .phone-content {
+      padding: 20px;
+      margin-top: 40px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .search-bar-container {
+      display: flex;
+      align-items: center;
+      background-color: #f1f1f1;
+      border-radius: 25px;
+      padding: 10px 15px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .material-icons {
+      color: #777;
+    }
+
+    .search-input {
+      border: none;
+      background: transparent;
+      outline: none;
+      flex: 1;
+      font-size: 16px;
+      margin-left: 10px;
+    }
+
+    #barcode-icon {
+      width: 28px;
+      height: 28px;
+      margin-left: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+      background-color: #f9f9f9;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      text-align: center;
+      padding: 12px 10px;
+    }
+
+    th {
+      background-color: #d6e6ff;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f1f6ff;
+    }
+
+    .Rezeptvorschlag {
+      background-color: #f0f8ff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .Rezeptvorschlag li {
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    #Home-icon {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 50px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="phone-notch"></div>
+  <div class="phone-content">
+    <div class="search-bar-container">
+      <span class="material-icons">search</span>
+      <input type="text" class="search-input" placeholder="Suche...">
+      <a href="#"><img id="barcode-icon" src="https://images.vexels.com/content/157862/preview/barcode-scanning-icon-1c9119.png" alt="Barcode-Scan"></a>
+    </div>
+
+    <table>
+      <thead>
+      <tr>
+        <th>Produkt</th>
+        <th>Proteine / 100g</th>
+        <th>Kcal / 100g</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>Nutella</td>
+        <td>6,3 g</td>
+        <td>539 kcal</td>
+      </tr>
+      <tr>
+        <td>Gouda Käse</td>
+        <td>25 g</td>
+        <td>356 kcal</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div class="Rezeptvorschlag">
+      <ul>
+        <li>🥣 Frühstücksquark Rezept</li>
+        <li>🍕 High Protein Pizza Rezept</li>
+      </ul>
+    </div>
+  </div>
+
+  <a href="Home.html"><img id="Home-icon" src="https://cdn-icons-png.flaticon.com/512/1946/1946488.png" alt="Home"></a>
+</div>
+
+</body>
+</html>

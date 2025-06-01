@@ -1,0 +1,275 @@
+{
+  "Omnivor": {
+    "Frühstück": {
+      "name": "Rührei mit Speck",
+      "produkte": [
+        {
+          "produkt": "Eier",
+          "menge": "2 Stück"
+        },
+        {
+          "produkt": "Speck",
+          "menge": "50 g"
+        },
+        {
+          "produkt": "Butter",
+          "menge": "10 g"
+        }
+      ],
+      "naehrwerte": {
+        "kalorien": 350,
+        "protein": 20,
+        "fett": 30,
+        "kohlenhydrate": 1
+      }
+    },
+    "Mittagessen": {
+      "name": "Hähnchenbrust mit Reis und Gemüse",
+      "produkte": [
+        {
+          "produkt": "Hähnchenbrust",
+          "menge": "200 g"
+        },
+        {
+          "produkt": "Reis (ungekocht)",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Brokkoli",
+          "menge": "150 g"
+        },
+        {
+          "produkt": "Olivenöl",
+          "menge": "10 g"
+        }
+      ],
+      "naehrwerte": {
+        "kalorien": 600,
+        "protein": 45,
+        "fett": 15,
+        "kohlenhydrate": 60
+      }
+    },
+    "Abendessen": {
+      "name": "Rindersteak mit Kartoffeln und Salat",
+      "produkte": [
+        {
+          "produkt": "Rindersteak",
+          "menge": "200 g"
+        },
+        {
+          "produkt": "Kartoffeln",
+          "menge": "200 g"
+        },
+        {
+          "produkt": "Salatmix",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Dressing (Olivenöl & Essig)",
+          "menge": "20 g"
+        }
+      ],
+      "naehrwerte": {
+        "kalorien": 700,
+        "protein": 50,
+        "fett": 35,
+        "kohlenhydrate": 50
+      }
+    }
+  },
+  "Vegan": {
+    "Frühstück": {
+      "name": "Haferbrei mit Banane",
+      "produkte": [
+        {
+          "produkt": "Haferflocken",
+          "menge": "50 g"
+        },
+        {
+          "produkt": "Sojamilch",
+          "menge": "200 ml"
+        },
+        {
+          "produkt": "Banane",
+          "menge": "1 Stück"
+        },
+        {
+          "produkt": "Leinsamen",
+          "menge": "10 g"
+        }
+      ],
+      "naehrwerte": {
+        "kalorien": 350,
+        "protein": 12,
+        "fett": 8,
+        "kohlenhydrate": 60
+      }
+    },
+    "Mittagessen": {
+      "name": "Linsensuppe mit Vollkornbrot",
+      "produkte": [
+        {
+          "produkt": "Rote Linsen",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Karotten",
+          "menge": "50 g"
+        },
+        {
+          "produkt": "Zwiebel",
+          "menge": "50 g"
+        },
+        {
+          "produkt": "Tomaten",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Gemüsebrühe",
+          "menge": "500 ml"
+        },
+        {
+          "produkt": "Vollkornbrot",
+          "menge": "60 g (2 Scheiben)"
+        }
+      ],
+      "naehrwerte": {
+        "kalorien": 500,
+        "protein": 25,
+        "fett": 6,
+        "kohlenhydrate": 80
+      }
+    },
+    "Abendessen": {
+      "name": "Tofu-Gemüse-Pfanne",
+      "produkte": [
+        {
+          "produkt": "Tofu",
+          "menge": "150 g"
+        },
+        {
+          "produkt": "Paprika",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Zucchini",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Sojasoße",
+          "menge": "20 g"
+        },
+        {
+          "produkt": "Reis (ungekocht)",
+          "menge": "100 g"
+        }
+      ],
+      "naehrwerte": {
+        "kalorien": 550,
+        "protein": 25,
+        "fett": 20,
+        "kohlenhydrate": 65
+      }
+    }
+  },
+  "Vegetarisch": {
+    "Frühstück": {
+      "name": "Joghurt mit Früchten und Müsli",
+      "produkte": [
+        {
+          "produkt": "Naturjoghurt",
+          "menge": "150 g"
+        },
+        {
+          "produkt": "Obstmix (Beeren)",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Müsli",
+          "menge": "50 g"
+        },
+        {
+          "produkt": "Honig",
+          "menge": "10 g"
+        }
+      ],
+      "naehrwerte": {
+        "kalorien": 300,
+        "protein": 12,
+        "fett": 8,
+        "kohlenhydrate": 45
+      }
+    },
+    "Mittagessen": {
+      "name": "Gemüse-Lasagne",
+      "produkte": [
+        {
+          "produkt": "Lasagneblätter",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Zucchini",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Aubergine",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Tomatensauce",
+          "menge": "150 g"
+        },
+        {
+          "produkt": "Mozzarella",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Parmesan",
+          "menge": "20 g"
+        }
+      ],
+      "naehrwerte": {
+        "kalorien": 650,
+        "protein": 30,
+        "fett": 30,
+        "kohlenhydrate": 60
+      }
+    },
+    "Abendessen": {
+      "name": "Kichererbsensalat mit Feta",
+      "produkte": [
+        {
+          "produkt": "Kichererbsen (gekocht)",
+          "menge": "200 g"
+        },
+        {
+          "produkt": "Paprika",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Gurke",
+          "menge": "100 g"
+        },
+        {
+          "produkt": "Feta",
+          "menge": "50 g"
+        },
+        {
+          "produkt": "Olivenöl",
+          "menge": "10 g"
+        },
+        {
+          "produkt": "Zitronensaft",
+          "menge": "10 g"
+        }
+      ],
+      "naehrwerte": {
+        "kalorien": 450,
+        "protein": 18,
+        "fett": 18,
+        "kohlenhydrate": 50
+      }
+    }
+  }
+}
