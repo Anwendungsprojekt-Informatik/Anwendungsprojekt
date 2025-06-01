@@ -7,8 +7,11 @@
   <style>
     :root {
       --primary: #4CAF50;
-      --danger: #d32f2f;
       --bg: #f4f4f4;
+      --input-bg: #fff;
+      --input-border: #ccc;
+      --input-radius: 5px;
+      --input-padding: 0.6rem 0.8rem;
     }
 
     * {
@@ -67,41 +70,120 @@
       border: none;
       cursor: pointer;
       font-size: 1.3rem;
+      color: white;
     }
 
     .section {
       padding: 1rem;
     }
 
-    .section input[type="text"] {
-      width: 100%;
-      padding: 0.5rem;
+    /* ********** Rezeptname-Styling ********** */
+    .recipe-name-wrapper {
+      margin-bottom: 1rem;
+    }
+    .recipe-name-wrapper label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
       font-size: 1rem;
-      margin-bottom: 1rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
     }
+    .recipe-name-input {
+      width: 100%;
+      background-color: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: var(--input-radius);
+      padding: var(--input-padding);
+      font-size: 1rem;
+      color: #333;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .recipe-name-input::placeholder {
+      color: #888;
+    }
+    .recipe-name-input:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 4px rgba(76, 175, 80, 0.3);
+    }
+    /* **************************************** */
 
-    .search {
+    /* Suchbereich */
+    .search-section {
       display: flex;
+      flex-wrap: wrap;
+      padding: 1rem;
       gap: 0.5rem;
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
       margin-bottom: 1rem;
     }
 
-    .search input {
+    .search-section input[type="text"],
+    .search-section input[type="number"] {
       flex: 1;
       padding: 0.5rem;
-      border-radius: 5px;
+      font-size: 1rem;
       border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #fff;
+      color: #333;
     }
 
-    .search button {
+    .search-section input::placeholder {
+      color: #888;
+    }
+
+    .search-section input:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 4px rgba(76,175,80,0.3);
+    }
+
+    .search-section button {
       background: var(--primary);
-      color: white;
       border: none;
       padding: 0.5rem 0.8rem;
       border-radius: 5px;
+      color: white;
       font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .search-section button:hover {
+      background: #45a049;
+    }
+
+    .search-section button.camera-btn {
+      background: none;
+      font-size: 1.5rem;
+      padding: 0.4rem;
+      border-radius: 50%;
+      border: 2px solid var(--primary);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .search-section button.camera-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .search-section input:focus + button {
+      border-color: var(--primary);
+      background: #4CAF50;
+      color: white;
+    }
+
+    .section-title {
+      font-weight: bold;
+      margin: 1rem 0 0.3rem;
+      font-size: 1.1rem;
     }
 
     .card-list {
@@ -130,10 +212,6 @@
       margin: 2px 0;
     }
 
-    .product-card input[type="number"] {
-      width: 60px;
-    }
-
     .remove-icon {
       display: none;
       position: absolute;
@@ -148,20 +226,6 @@
       display: block;
     }
 
-    .save-button {
-      position: fixed;
-      bottom: 1.5rem;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 1rem 2rem;
-      background: var(--primary);
-      color: white;
-      font-size: 1.1rem;
-      border: none;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-
     .add-button-small {
       display: inline-block;
       margin-top: 0.5rem;
@@ -174,10 +238,40 @@
       cursor: pointer;
     }
 
-    .section-title {
-      font-weight: bold;
-      font-size: 1rem;
-      margin: 1rem 0 0.3rem;
+    .add-button-small:hover {
+      background: #45a049;
+    }
+
+    .barcode-result {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #eef9f1;
+      border-left: 5px solid var(--primary);
+      border-radius: 5px;
+    }
+
+    .barcode-result p {
+      margin: 0.3rem 0;
+    }
+
+    .save-button {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 1rem 2rem;
+      background: var(--primary);
+      color: white;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .save-button:hover {
+      background: #45a049;
     }
   </style>
 </head>
@@ -204,13 +298,22 @@
   </header>
 
   <div class="section">
-    <label for="recipeName"><strong>Rezeptname:</strong></label>
-    <input type="text" id="recipeName" placeholder="z. B. Protein Porridge" />
-
-    <div class="search">
-      <input type="text" id="searchInput" placeholder="Produkt suchen…" />
-      <button onclick="searchProduct()">🔍</button>
+    <!-- Rezeptname mit eigenem Wrapper und ansprechendem Style -->
+    <div class="recipe-name-wrapper">
+      <label for="recipeName">Rezeptname:</label>
+      <input type="text" id="recipeName" class="recipe-name-input" placeholder="z. B. Protein Porridge" />
     </div>
+
+    <!-- Suchbereich analog zur "Produkt hinzufügen"-Seite -->
+    <div class="search-section">
+      <input type="text" id="searchInput" placeholder="Produktname eingeben…" />
+      <button onclick="searchProduct()">🔍</button>
+
+      <input type="number" id="barcodeInput" placeholder="Barcode eingeben…" />
+      <button class="camera-btn" onclick="fetchProductByBarcode()">📷</button>
+    </div>
+
+    <div id="searchResults" class="card-list"></div>
 
     <div class="section-title">Produkte im Rezept</div>
     <div class="card-list" id="productList"></div>
@@ -232,9 +335,8 @@
 
     /**
      * Produktsuche für das Rezept:
-     * Wir rufen hier dein Gin-Backend unter /api/search auf
      */
-        async function searchProduct() {
+    async function searchProduct() {
       const query = document.getElementById("searchInput").value.trim();
       if (!query) return;
 
@@ -254,13 +356,11 @@
 
         // Zeige bis zu 5 Ergebnisse
         products.slice(0, 5).forEach((p) => {
-          // Anpassen je nach Feldnamen in deiner Go-Struct:
           const name = p.ProductName || p.product_name || "Unbenannt";
           const brand = p.Brands || p.brands || "Keine Marke";
           const barcode = p.Code || p.code || "";
           const n = p.Nutriments || p.nutriments || {};
 
-          // Nährwerte (falls vorhanden)
           const kcal = parseFloat(n["energy-kcal_100g"]) || 0;
           const fat = parseFloat(n["fat_100g"]) || 0;
           const sugar = parseFloat(n["sugars_100g"]) || 0;
@@ -298,11 +398,103 @@
       }
     }
 
-    function calculate(input, kcalPer100) {
+    /**
+     * Barcode-Suche: GET /api/product/:barcode
+     */
+    async function fetchProductByBarcode() {
+      const bc = document.getElementById("barcodeInput").value.trim();
+      if (!bc) return;
+
+      const resultContainer = document.getElementById("searchResults");
+      resultContainer.innerHTML = ""; // vorher leeren
+
+      try {
+        const res = await fetch(`/api/product/${encodeURIComponent(bc)}`);
+        if (!res.ok) {
+          if (res.status === 404) {
+            resultContainer.innerHTML = "<p>Produkt nicht gefunden.</p>";
+            return;
+          }
+          throw new Error(`Status ${res.status}`);
+        }
+
+        const p = await res.json();
+        const name = p.ProductName || p.product_name || "Unbenannt";
+        const brand = p.Brands || p.brands || "Keine Marke";
+        const barcode = p.Code || p.code || "";
+        const n = p.Nutriments || p.nutriments || {};
+
+        const kcal = parseFloat(n["energy-kcal_100g"]) || 0;
+        const fat = parseFloat(n["fat_100g"]) || 0;
+        const sugar = parseFloat(n["sugars_100g"]) || 0;
+        const carbs = parseFloat(n["carbohydrates_100g"]) || 0;
+        const protein = parseFloat(n["proteins_100g"]) || 0;
+
+        const box = document.createElement("div");
+        box.className = "barcode-result";
+        box.innerHTML = `
+          <h3>${name}</h3>
+          <p><strong>Marke:</strong> ${brand}</p>
+          <p><strong>Barcode:</strong> ${barcode}</p>
+          <p><strong>Kcal/100g:</strong> ${kcal} kcal</p>
+          <p><strong>Fett/100g:</strong> ${fat} g</p>
+          <p><strong>Zucker/100g:</strong> ${sugar} g</p>
+          <p><strong>KH/100g:</strong> ${carbs} g</p>
+          <p><strong>Protein/100g:</strong> ${protein} g</p>
+          <button class="add-button-small" onclick='addToList(${JSON.stringify({
+            name,
+            kcal,
+            fat,
+            sugar,
+            carbs,
+            protein
+          })})'>
+            ➕ Hinzufügen
+          </button>
+        `;
+        resultContainer.appendChild(box);
+      } catch (err) {
+        console.error(err);
+        resultContainer.innerHTML = `<p style="color:red">Fehler: ${err.message}</p>`;
+      }
+    }
+
+    function addToList(product) {
+      const list = document.getElementById("productList");
+
+      const card = document.createElement("div");
+      card.className = "product-card";
+      card.innerHTML = `
+        <span class="remove-icon" onclick="this.parentElement.remove()">➖</span>
+        <h3>${product.name}</h3>
+        <div class="row"><span>Kcal/100g:</span><span>${product.kcal}</span></div>
+        <div class="row"><span class="result fat">Fett:</span><span>${product.fat}g</span></div>
+        <div class="row"><span class="result sugar">Zucker:</span><span>${product.sugar}g</span></div>
+        <div class="row"><span class="result carbs">KH:</span><span>${product.carbs}g</span></div>
+        <div class="row"><span class="result protein">Protein:</span><span>${product.protein}g</span></div>
+        <div class="row">
+          <span>Menge:</span>
+          <span><input type="number" min="1" value="100"
+            onchange="calculate(this, ${product.kcal}, ${product.fat}, ${product.sugar}, ${product.carbs}, ${product.protein})" /> g</span>
+        </div>
+        <div class="row"><strong>Berechnet:</strong> <span class="result kcal">${Math.round(product.kcal)} kcal</span></div>
+      `;
+      list.appendChild(card);
+    }
+
+    function calculate(input, kcalPer100, fatPer100, sugarPer100, carbsPer100, proteinPer100) {
       const g = parseFloat(input.value) || 0;
       const kcal = Math.round((kcalPer100 * g) / 100);
-      const result = input.closest(".product-card").querySelector(".result");
-      result.textContent = `${kcal} kcal`;
+      const fat = Math.round((fatPer100 * g) / 100);
+      const sugar = Math.round((sugarPer100 * g) / 100);
+      const carbs = Math.round((carbsPer100 * g) / 100);
+      const protein = Math.round((proteinPer100 * g) / 100);
+      const result = input.closest(".product-card");
+      result.querySelector(".result.kcal").textContent = `${kcal} kcal`;
+      result.querySelector(".result.fat").textContent = `${fat} g`;
+      result.querySelector(".result.sugar").textContent = `${sugar} g`;
+      result.querySelector(".result.carbs").textContent = `${carbs} g`;
+      result.querySelector(".result.protein").textContent = `${protein} g`;
     }
 
     function saveRecipe() {
@@ -315,7 +507,7 @@
       const products = Array.from(cards).map(card => {
         return {
           name: card.querySelector("h3").textContent,
-          kcal: card.querySelector(".result").textContent,
+          kcal: card.querySelector(".result.kcal").textContent.replace(" kcal", "")
         };
       });
 
