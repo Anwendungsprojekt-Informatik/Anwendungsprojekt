@@ -270,11 +270,11 @@
 
       if(storedData) {
         const userData = JSON.parse(storedData);
-        const kcalTarget = userData.kcalTarget;
+        const kcalTarget = parseFloat(userData.kcalTarget);
         const openCalories = kcalTarget - totalKcal;
         const circle = document.getElementById("calorieCircle");
-        circle.innerHTML = `${openCalories} / ${kcalTarget} kcal`;
-        const percentage = (openCalories / kcalTarget) * 100;
+        circle.innerHTML = `${kcalTarget - openCalories} / ${kcalTarget} kcal`;
+        const percentage = ((kcalTarget - openCalories) / kcalTarget) * 100;
         circle.style.background = `conic-gradient(var(--primary) ${percentage}%, #ddd 0)`;
       }
     }
@@ -314,11 +314,11 @@
         li.innerHTML = `
           <div>
             <strong>${entry.name}</strong><br>
-            ${entry.kcal} kcal<br>
-            ${entry.protein}g protein<br>
-            ${entry.fat}g fat<br>
-            ${entry.carbs}g carbs<br>
-            ${entry.sugar}g sugar<br>
+            ${entry.kcal} Kcal<br>
+            ${entry.protein}g Protein<br>
+            ${entry.fat}g Fett<br>
+            ${entry.carbs}g Kohlenhydrate<br>
+            ${entry.sugar}g Zucker<br>
           </div>
           <span class="remove">🗑️</span>
         `;
@@ -350,6 +350,8 @@
           console.error(err);
           alert("Fehler beim Löschen");
         });
+      loadNutrients();
+      loadEatenList();
     }
 
     // Beispiel: zeige Warnung wenn ein Nährwert überschritten ist
