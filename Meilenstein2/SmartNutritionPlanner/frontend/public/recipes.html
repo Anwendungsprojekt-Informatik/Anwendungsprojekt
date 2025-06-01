@@ -239,20 +239,27 @@
 
     // ---------- Funktion, um eigenes Rezept in DailyFoodLog.json zu speichern ----------
     function addOwnRecipeToDailyLog(recipe) {
-      // Summiere alle kcal-Werte der Produkte, dabei wandeln wir p.kcal explizit in Number um.
-      const totalKcal = (recipe.products || []).reduce((sum, p) => {
-        // p.kcal kann ein String sein, deshalb: Number(p.kcal) oder parseInt
-        return sum + (Number(p.kcal) || 0);
-      }, 0);
+      // Gesamte Nährwerte initialisieren
+      const total = { kcal: 0, fat: 0, sugar: 0, carbs: 0, protein: 0 };
 
-      // Jetzt unbedingt das Feld "sugar: 0" mitschicken, damit das JSON-Shape passt:
+      // Über alle Produkte iterieren und jeweilige Nährwerte addieren
+      (recipe.products || []).forEach(p => {
+        const nv = p.naehrwerte || {};
+        total.kcal    += Number(nv.kcal)    || 0;
+        total.fat     += Number(nv.fat)     || 0;
+        total.sugar   += Number(nv.sugar)   || 0;
+        total.carbs   += Number(nv.carbs)   || 0;
+        total.protein += Number(nv.protein) || 0;
+      });
+
+      // JSON-Eintrag mit allen aufsummierten Werten
       const entry = {
-        name: recipe.name,
-        kcal: totalKcal,  // ist jetzt definitiv eine Number
-        fat: 0,
-        sugar: 0,
-        carbs: 0,
-        protein: 0
+        name:    recipe.name,
+        kcal:    total.kcal,
+        fat:     total.fat,
+        sugar:   total.sugar,
+        carbs:   total.carbs,
+        protein: total.protein
       };
 
       fetch("/api/daily-entries", {
@@ -322,7 +329,7 @@
         recipe.products.forEach(p => {
           const rowDiv = document.createElement("div");
           rowDiv.className = "row";
-          rowDiv.innerHTML = `<span>${p.name}:</span><span>${p.kcal}</span>`;
+          rowDiv.innerHTML = `<span>${p.name}:</span><span>${p.naehrwerte.kcal}</span>`;
           card.appendChild(rowDiv);
         });
 

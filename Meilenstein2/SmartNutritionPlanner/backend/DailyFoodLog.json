@@ -18,6 +18,14 @@
           "sugar": 0.5,
           "carbs": 1,
           "protein": 20
+        },
+        {
+          "name": "Frühstück",
+          "kcal": 180,
+          "fat": 1,
+          "sugar": 13,
+          "carbs": 13,
+          "protein": 30
         }
       ]
     }
