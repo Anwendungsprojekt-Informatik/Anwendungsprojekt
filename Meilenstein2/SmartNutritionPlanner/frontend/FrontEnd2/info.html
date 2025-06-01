@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Speichern Button</title>
+  <style>
+    .save-button {
+      display: inline-flex;
+      align-items: center;
+      background-color: #28a745; /* Grün */
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: background-color 0.3s ease;
+    }
+
+    .save-button:hover {
+      background-color: #218838;
+    }
+
+    .save-icon {
+      width: 18px;
+      height: 18px;
+      margin-right: 8px;
+      fill: white;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="save-button" onclick="handleSaveClick()">
+    Speichern
+  </button>
+
+  <script>
+    function handleSaveClick() {
+      // Platzhalter für spätere Speicherfunktion
+      console.log("Speichern-Button wurde geklickt – Funktion folgt.");
+    }
+  </script>
+
+</body>
+</html>
