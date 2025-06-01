@@ -73,7 +73,7 @@
       max-width: 250px;
       aspect-ratio: 1/1;
       border-radius: 50%;
-      background: conic-gradient(var(--primary) 65%, #ddd 0);
+      background: conic-gradient(var(--primary) 0%, #ddd 0);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -186,7 +186,6 @@
 
   <div class="content">
     <div class="circle" id="calorieCircle">
-      1400 kcal übrig
     </div>
 
     <div class="nutrient-bar">
@@ -239,6 +238,12 @@
       loadEatenList();
     });
 
+    document.addEventListener("click", function(e){
+      if (e.target.matches(".remove")){
+        removeItem(e.target);
+      }
+    });
+
     function toggleMenu() {
       document.getElementById('sidebar').classList.toggle('active');
     }
@@ -259,6 +264,19 @@
       document.querySelector(".bar-fill.protein").style.width = proteinPercent + "%";
       document.querySelector(".bar-fill.carbs").style.width = carbsPercent + "%";
       document.querySelector(".bar-fill.sugar").style.width = sugarPercent + "%";
+      
+      
+      const storedData = localStorage.getItem("userData");
+
+      if(storedData) {
+        const userData = JSON.parse(storedData);
+        const kcalTarget = parseFloat(userData.kcalTarget);
+        const openCalories = kcalTarget - totalKcal;
+        const circle = document.getElementById("calorieCircle");
+        circle.innerHTML = `${kcalTarget - openCalories} / ${kcalTarget} kcal`;
+        const percentage = ((kcalTarget - openCalories) / kcalTarget) * 100;
+        circle.style.background = `conic-gradient(var(--primary) ${percentage}%, #ddd 0)`;
+      }
     }
 
     // API Aufruf für aktuelle Daten der täglichen Nährwerte
@@ -286,23 +304,54 @@
 
       entries.forEach(entry => {
         const li = document.createElement("li");
+        li.dataset.name = entry.name;
+        li.dataset.kcal = entry.kcal;
+        li.dataset.protein = entry.protein;
+        li.dataset.fat = entry.fat;
+        li.dataset.carbs = entry.carbs;
+        li.dataset.sugar = entry.sugar;
+
         li.innerHTML = `
           <div>
             <strong>${entry.name}</strong><br>
-            ${entry.kcal} kcal<br>
-            ${entry.protein}g protein<br>
-            ${entry.fat}g fat<br>
-            ${entry.carbs}g carbs<br>
-            ${entry.sugar}g sugar<br>
+            ${entry.kcal} Kcal<br>
+            ${entry.protein}g Protein<br>
+            ${entry.fat}g Fett<br>
+            ${entry.carbs}g Kohlenhydrate<br>
+            ${entry.sugar}g Zucker<br>
           </div>
-          <span class="remove" onclick="removeItem(this)">🗑️</span>
+          <span class="remove">🗑️</span>
         `;
         list.appendChild(li);
       });
     }
 
     function removeItem(icon) {
-      icon.closest('li').remove();
+      const li = icon.closest("li");
+      
+      const name = li.dataset.name;
+      const kcal = parseFloat(li.dataset.kcal);
+      const protein = parseFloat(li.dataset.protein);
+      const fat = parseFloat(li.dataset.fat);
+      const carbs = parseFloat(li.dataset.carbs);
+      const sugar = parseFloat(li.dataset.sugar);
+      // Optional: Mengen- oder Makronährwert-Infos aus versteckten Attributen mitgeben, falls nötig
+
+      fetch("/api/daily-entry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, kcal, protein, fat, carbs, sugar }) // ggf. erweitern um weitere Werte
+      })
+        .then(res => {
+          if (!res.ok) throw new Error("Löschen fehlgeschlagen");
+          li.remove(); // nur bei Erfolg im Backend visuell löschen
+        })
+        .catch(err => {
+          console.error(err);
+          alert("Fehler beim Löschen");
+        });
+      loadNutrients();
+      loadEatenList();
     }
 
     // Beispiel: zeige Warnung wenn ein Nährwert überschritten ist

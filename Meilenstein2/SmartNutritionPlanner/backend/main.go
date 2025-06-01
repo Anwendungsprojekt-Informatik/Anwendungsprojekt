@@ -130,6 +130,9 @@ func main() {
 
 		// f) Heute gegessen Einträge: GET /api/today-entries
 		apiGroup.GET("/today-entries", middleware.GetEntriesForToday)
+
+		// g) Eintrag von heute gegessen löschen: DELETE /api/daily-entriy
+		apiGroup.POST("/daily-entry", middleware.DeleteDailyEntry)
 	}
 
 	// ---------------------------------------------------
