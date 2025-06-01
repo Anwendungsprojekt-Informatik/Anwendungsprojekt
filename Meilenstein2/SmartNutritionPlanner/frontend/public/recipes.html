@@ -7,8 +7,10 @@
   <style>
     :root {
       --primary: #4CAF50;
+      --secondary: #388E3C;
       --danger: #d32f2f;
       --bg: #f4f4f4;
+      --text-dark: #333;
     }
 
     * {
@@ -19,7 +21,7 @@
       margin: 0;
       font-family: Arial, sans-serif;
       background-color: var(--bg);
-      color: #333;
+      color: var(--text-dark);
       padding-bottom: 100px;
     }
 
@@ -67,6 +69,7 @@
       border: none;
       cursor: pointer;
       font-size: 1.3rem;
+      color: white;
     }
 
     .section-title {
@@ -102,11 +105,33 @@
       margin: 2px 0;
     }
 
+    .plus-icon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 1.3rem;
+      color: var(--primary);
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    .cart-icon {
+      position: absolute;
+      top: 10px;
+      right: 40px;
+      font-size: 1.3rem;
+      color: var(--secondary);
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
     .remove-icon {
       display: none;
       position: absolute;
       top: 10px;
-      right: 10px;
+      right: 70px;
       font-size: 1.3rem;
       color: var(--danger);
       cursor: pointer;
@@ -131,6 +156,12 @@
       justify-content: center;
       text-decoration: none;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .no-recipes {
+      padding: 1rem;
+      font-style: italic;
+      color: #666;
     }
   </style>
 </head>
@@ -159,20 +190,7 @@
   <!-- Empfohlene Rezepte -->
   <div class="section-title">Empfohlene Rezepte</div>
   <div class="card-list" id="recommendedRecipes">
-    <div class="recipe-card">
-      <h3>Grüner Smoothie</h3>
-      <div class="row"><span>Kcal:</span><span>320</span></div>
-      <div class="row"><span>Fett:</span><span>4g</span></div>
-      <div class="row"><span>Zucker:</span><span>18g</span></div>
-      <div class="row"><span>Protein:</span><span>6g</span></div>
-    </div>
-    <div class="recipe-card">
-      <h3>Tofu-Bowl</h3>
-      <div class="row"><span>Kcal:</span><span>540</span></div>
-      <div class="row"><span>Fett:</span><span>12g</span></div>
-      <div class="row"><span>Zucker:</span><span>6g</span></div>
-      <div class="row"><span>Protein:</span><span>24g</span></div>
-    </div>
+    <div class="no-recipes" id="noRecipesMsg">Lade Rezepte…</div>
   </div>
 
   <!-- Eigene Rezepte -->
@@ -183,31 +201,101 @@
   <a href="/public/create-recipe.html" class="add-button">+</a>
 
   <script>
+    // Sidebar ein/ausklappen
     function toggleMenu() {
       document.getElementById("sidebar").classList.toggle("active");
     }
 
+    // Delete-Mode umschalten (zeigt den roten „➖“-Button bei eigenen Rezepten)
     function toggleDeleteMode() {
       document.body.classList.toggle("remove-mode");
     }
 
+    // Fügt Zutaten eines eigenen Rezepts anhand des Index zur Einkaufsliste hinzu
+    function addOwnRecipeToShoppingList(index) {
+      const own = JSON.parse(localStorage.getItem("ownRecipes") || "[]");
+      if (index < 0 || index >= own.length) return;
+      const recipe = own[index];
+      const produkteArray = recipe.products || [];
+
+      const existing = JSON.parse(localStorage.getItem("shoppingList") || "[]");
+      produkteArray.forEach(item => {
+        const produktName = item.name || "";
+        const mengeWert = ""; // eigene Rezepte haben keine „menge“, deshalb leer lassen
+        if (!produktName) return;
+        const exists = existing.some(e => e.produkt === produktName);
+        if (!exists) {
+          existing.push({
+            produkt: produktName,
+            menge: mengeWert,
+            checked: false
+          });
+        }
+      });
+
+      localStorage.setItem("shoppingList", JSON.stringify(existing));
+      alert("Zutaten des eigenen Rezepts wurden der Einkaufsliste hinzugefügt!");
+    }
+
+    // Lädt eigene Rezepte aus localStorage und fügt + und Einkaufswagen‐Buttons hinzu
     function loadOwnRecipes() {
       const container = document.getElementById("ownRecipes");
       const data = JSON.parse(localStorage.getItem("ownRecipes") || "[]");
       container.innerHTML = "";
 
+      if (data.length === 0) {
+        const placeholder = document.createElement("div");
+        placeholder.className = "no-recipes";
+        placeholder.textContent = "Du hast noch keine eigenen Rezepte erstellt.";
+        container.appendChild(placeholder);
+        return;
+      }
+
       data.forEach((recipe, index) => {
         const card = document.createElement("div");
         card.className = "recipe-card";
-        card.innerHTML = `
-          <span class="remove-icon" onclick="removeRecipe(${index})">➖</span>
-          <h3>${recipe.name}</h3>
-          ${recipe.products.map(p => `<div class="row"><span>${p.name}:</span><span>${p.kcal}</span></div>`).join('')}
-        `;
+
+        // Entfernen-Button (nur im Remove‐Mode sichtbar)
+        const removeBtn = document.createElement("button");
+        removeBtn.className = "remove-icon";
+        removeBtn.innerHTML = "➖";
+        removeBtn.title = "Rezept löschen";
+        removeBtn.onclick = () => removeRecipe(index);
+        card.appendChild(removeBtn);
+
+        // Einkaufswagen-Button
+        const cartBtn = document.createElement("button");
+        cartBtn.className = "cart-icon";
+        cartBtn.innerHTML = "🛒";
+        cartBtn.title = "Zutaten in die Einkaufsliste übernehmen";
+        cartBtn.onclick = () => addOwnRecipeToShoppingList(index);
+        card.appendChild(cartBtn);
+
+        // Plus-Button
+        const plusBtn = document.createElement("button");
+        plusBtn.className = "plus-icon";
+        plusBtn.textContent = "+";
+        plusBtn.title = "Weitere Aktion…";
+        card.appendChild(plusBtn);
+
+        // Rezeptname
+        const title = document.createElement("h3");
+        title.textContent = recipe.name;
+        card.appendChild(title);
+
+        // Produkte/Nährwerte (Name: kcal)
+        recipe.products.forEach(p => {
+          const rowDiv = document.createElement("div");
+          rowDiv.className = "row";
+          rowDiv.innerHTML = `<span>${p.name}:</span><span>${p.kcal}</span>`;
+          card.appendChild(rowDiv);
+        });
+
         container.appendChild(card);
       });
     }
 
+    // Entfernt ein eigenes Rezept
     function removeRecipe(index) {
       const data = JSON.parse(localStorage.getItem("ownRecipes") || "[]");
       data.splice(index, 1);
@@ -215,8 +303,105 @@
       loadOwnRecipes();
     }
 
-    // Beim Laden einmal ausführen
-    loadOwnRecipes();
+    // Lädt empfohlene Rezepte aus recipes.json basierend auf dietType und fügt + und Einkaufswagen‐Buttons hinzu
+    async function loadRecommendedRecipes() {
+      const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+      const dietType = userData.dietType || "";
+      const container = document.getElementById("recommendedRecipes");
+      container.innerHTML = "";
+
+      if (!dietType) {
+        const msg = document.createElement("div");
+        msg.className = "no-recipes";
+        msg.textContent = "Bitte wähle zuerst eine Ernährungsart in Deinem Konto aus.";
+        container.appendChild(msg);
+        return;
+      }
+
+      try {
+        const response = await fetch("recipes.json");
+        if (!response.ok) throw new Error("Konnte recipes.json nicht laden.");
+        const allRecipes = await response.json();
+
+        if (!allRecipes[dietType] || Object.keys(allRecipes[dietType]).length === 0) {
+          const msg = document.createElement("div");
+          msg.className = "no-recipes";
+          msg.textContent = "Für die gewählte Ernährungsart wurden keine Rezepte gefunden.";
+          container.appendChild(msg);
+          return;
+        }
+
+        Object.values(allRecipes[dietType]).forEach(recipe => {
+          const card = document.createElement("div");
+          card.className = "recipe-card";
+
+          // Einkaufswagen-Button
+          const cartBtn = document.createElement("button");
+          cartBtn.className = "cart-icon";
+          cartBtn.innerHTML = "🛒";
+          cartBtn.title = "Zutaten in die Einkaufsliste übernehmen";
+          cartBtn.onclick = () => addProductsToShoppingList(recipe.produkte);
+          card.appendChild(cartBtn);
+
+          // Plus-Button
+          const plusBtn = document.createElement("button");
+          plusBtn.className = "plus-icon";
+          plusBtn.textContent = "+";
+          plusBtn.title = "Weitere Aktion…";
+          card.appendChild(plusBtn);
+
+          // Rezeptname
+          const title = document.createElement("h3");
+          title.textContent = recipe.name;
+          card.appendChild(title);
+
+          // Nährwerte anzeigen (Kalorien, Fett, Kohlenhydrate, Protein)
+          const nv = recipe.naehrwerte || {};
+          const rows = [
+            { label: "Kcal:", value: nv.kalorien ?? "-" },
+            { label: "Fett:", value: nv.fett != null ? nv.fett + "g" : "-" },
+            { label: "Kohlenhydrate:", value: nv.kohlenhydrate != null ? nv.kohlenhydrate + "g" : "-" },
+            { label: "Protein:", value: nv.protein != null ? nv.protein + "g" : "-" }
+          ];
+          rows.forEach(r => {
+            const rowDiv = document.createElement("div");
+            rowDiv.className = "row";
+            rowDiv.innerHTML = `<span>${r.label}</span><span>${r.value}</span>`;
+            card.appendChild(rowDiv);
+          });
+
+          container.appendChild(card);
+        });
+      } catch (err) {
+        const msg = document.createElement("div");
+        msg.className = "no-recipes";
+        msg.textContent = "Fehler beim Laden der Rezepte.";
+        container.appendChild(msg);
+      }
+    }
+
+    // Fügt Zutaten aus recipes.json zur Einkaufsliste hinzu
+    function addProductsToShoppingList(produkteArray) {
+      const existing = JSON.parse(localStorage.getItem("shoppingList") || "[]");
+      produkteArray.forEach(item => {
+        const exists = existing.some(e => e.produkt === item.produkt);
+        if (!exists) {
+          existing.push({
+            produkt: item.produkt,
+            menge: item.menge,
+            checked: false
+          });
+        }
+      });
+      localStorage.setItem("shoppingList", JSON.stringify(existing));
+      alert("Zutaten wurden der Einkaufsliste hinzugefügt!");
+    }
+
+    // Beim Laden der Seite einmal ausführen
+    window.addEventListener("DOMContentLoaded", () => {
+      loadOwnRecipes();
+      loadRecommendedRecipes();
+    });
   </script>
 </body>
 </html>
