@@ -44,6 +44,27 @@
           "protein": 60
         }
       ]
+    },
+    {
+      "date": "2025-06-02",
+      "entries": [
+        {
+          "name": "Rührei mit Speck",
+          "kcal": 350,
+          "fat": 30,
+          "sugar": 0.5,
+          "carbs": 1,
+          "protein": 20
+        },
+        {
+          "name": "Hähnchenbrust mit Reis und Gemüse",
+          "kcal": 600,
+          "fat": 15,
+          "sugar": 2.5,
+          "carbs": 60,
+          "protein": 45
+        }
+      ]
     }
   ]
 }

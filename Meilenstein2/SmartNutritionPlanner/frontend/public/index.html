@@ -73,7 +73,7 @@
       max-width: 250px;
       aspect-ratio: 1/1;
       border-radius: 50%;
-      background: conic-gradient(var(--primary) 65%, #ddd 0);
+      background: conic-gradient(var(--primary) 0%, #ddd 0);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -186,7 +186,6 @@
 
   <div class="content">
     <div class="circle" id="calorieCircle">
-      1400 kcal übrig
     </div>
 
     <div class="nutrient-bar">
@@ -265,6 +264,19 @@
       document.querySelector(".bar-fill.protein").style.width = proteinPercent + "%";
       document.querySelector(".bar-fill.carbs").style.width = carbsPercent + "%";
       document.querySelector(".bar-fill.sugar").style.width = sugarPercent + "%";
+      
+      
+      const storedData = localStorage.getItem("userData");
+
+      if(storedData) {
+        const userData = JSON.parse(storedData);
+        const kcalTarget = userData.kcalTarget;
+        const openCalories = kcalTarget - totalKcal;
+        const circle = document.getElementById("calorieCircle");
+        circle.innerHTML = `${openCalories} / ${kcalTarget} kcal`;
+        const percentage = (openCalories / kcalTarget) * 100;
+        circle.style.background = `conic-gradient(var(--primary) ${percentage}%, #ddd 0)`;
+      }
     }
 
     // API Aufruf für aktuelle Daten der täglichen Nährwerte
