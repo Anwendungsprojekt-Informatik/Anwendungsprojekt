@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/Anwendungsprojekt-Informatik/Anwendungsprojekt/api"
+	"github.com/Anwendungsprojekt-Informatik/Anwendungsprojekt/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -64,6 +65,9 @@ func main() {
 			// JSON-Antwort für das Frontend
 			c.JSON(http.StatusOK, p)
 		})
+
+		// c) Produkte hinzufügen: POST /api/daily-entries
+		apiGroup.POST("/daily-entries", middleware.HandleDailyEntries)
 	}
 
 	// ---------------------------------------------------

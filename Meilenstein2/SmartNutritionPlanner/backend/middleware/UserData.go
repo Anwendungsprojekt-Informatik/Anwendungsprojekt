@@ -3,8 +3,11 @@ package middleware
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Struct passend zur JSON-Struktur
@@ -26,10 +29,12 @@ type Nutrients struct {
 }
 
 type ProductEntry struct {
-	Name          string    `json:"name"`
-	Barcode       string    `json:"barcode"`
-	AmountInGrams float64   `json:"amountInGrams"`
-	Nutrients     Nutrients `json:"nutrients"`
+	Name    string  `json:"name"`
+	Kcal    float64 `json:"kcal"`
+	Fat     float64 `json:"fat"`
+	Sugar   float64 `json:"sugar"`
+	Carbs   float64 `json:"carbs"`
+	Protein float64 `json:"protein"`
 }
 
 type DayEntry struct {
@@ -38,9 +43,10 @@ type DayEntry struct {
 }
 
 type DailyFood struct {
-	Days []DayEntry `json:"dailyFoodLog.json"`
+	Days []DayEntry `json:"DailyFoodLog.json"`
 }
 
+/*
 // Funktion zum Erzeugen und Speichern der JSON-Daten
 func SaveUserData(name, age, height, weight, calorieTarget, typeOfDiet string) error {
 	data := UserData{
@@ -80,6 +86,23 @@ func LoadUserData() (UserData, error) {
 	}
 
 	return data, nil
+}
+*/
+
+// Funktion zum handlen des http Requests für die daily Entries
+func HandleDailyEntries(c *gin.Context) {
+	var entries []ProductEntry
+	if err := c.ShouldBindJSON(&entries); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
+		return
+	}
+
+	if err := AddDailyEntries(entries); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.Status(http.StatusOK)
 }
 
 // Funktion zum Einfügen/Ändern der Produkte für den Tag
@@ -151,11 +174,11 @@ func CalculateTotalNutrientsForToday() (Nutrients, error) {
 	for _, day := range data.Days {
 		if day.Date == today {
 			for _, entry := range day.Entries {
-				total.Calories += entry.Nutrients.Calories
-				total.Protein += entry.Nutrients.Protein
-				total.Fat += entry.Nutrients.Fat
-				total.Carbs += entry.Nutrients.Carbs
-				total.Sugar += entry.Nutrients.Sugar
+				total.Calories += entry.Kcal
+				total.Protein += entry.Protein
+				total.Fat += entry.Fat
+				total.Carbs += entry.Carbs
+				total.Sugar += entry.Sugar
 			}
 			return total, nil
 		}
