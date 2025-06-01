@@ -386,16 +386,16 @@
         <span class="remove-icon" onclick="this.parentElement.remove()">➖</span>
         <h3>${product.name}</h3>
         <div class="row"><span>Kcal/100g:</span><span>${product.kcal}</span></div>
-        <div class="row"><span>Fett:</span><span>${product.fat}g</span></div>
-        <div class="row"><span>Zucker:</span><span>${product.sugar}g</span></div>
-        <div class="row"><span>KH:</span><span>${product.carbs}g</span></div>
-        <div class="row"><span>Protein:</span><span>${product.protein}g</span></div>
+        <div class="row"><span class="result fat">Fett:</span><span>${product.fat}g</span></div>
+        <div class="row"><span class="result sugar">Zucker:</span><span>${product.sugar}g</span></div>
+        <div class="row"><span class="result carbs">KH:</span><span>${product.carbs}g</span></div>
+        <div class="row"><span class="result protein">Protein:</span><span>${product.protein}g</span></div>
         <div class="row">
           <span>Menge:</span>
           <span><input type="number" min="1" value="100"
-            onchange="calculate(this, ${product.kcal})" /> g</span>
+            onchange="calculate(this, ${product.kcal}, ${product.fat}, ${product.sugar}, ${product.carbs}, ${product.protein})" /> g</span>
         </div>
-        <div class="row"><strong>Berechnet:</strong> <span class="result">${Math.round(product.kcal)} kcal</span></div>
+        <div class="row"><strong>Berechnet:</strong> <span class="result kcal">${Math.round(product.kcal)} kcal</span></div>
       `;
       list.appendChild(card);
     }
@@ -403,11 +403,19 @@
     /**
      * 4) Kalorien-/Nährwert-Umrechnung pro x Gramm
      */
-    function calculate(input, kcalPer100) {
+    function calculate(input, kcalPer100, fatPer100, sugarPer100, carbsPer100, proteinPer100) {
       const g = parseFloat(input.value) || 0;
       const kcal = Math.round((kcalPer100 * g) / 100);
-      const result = input.closest(".product-card").querySelector(".result");
-      result.textContent = `${kcal} kcal`;
+      const fat = Math.round((fatPer100 * g) / 100);
+      const sugar = Math.round((sugarPer100 * g) / 100);
+      const carbs = Math.round((carbsPer100 * g) / 100);
+      const protein = Math.round((proteinPer100 * g) / 100);
+      const result = input.closest(".product-card");
+      result.querySelector(".result.kcal").textContent = `${kcal} kcal`;
+      result.querySelector(".result.fat").textContent = `${fat} kcal`;
+      result.querySelector(".result.sugar").textContent = `${sugar} kcal`;
+      result.querySelector(".result.carbs").textContent = `${carbs} kcal`;
+      result.querySelector(".result.protein").textContent = `${protein} kcal`;
     }
   </script>
 
