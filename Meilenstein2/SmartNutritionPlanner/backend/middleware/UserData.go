@@ -151,6 +151,16 @@ func AddDailyEntries(newEntries []ProductEntry) error {
 	return os.WriteFile(filename, jsonData, 0644)
 }
 
+// Funktion zum handlen des http Requests für die DailySummary
+func HandleDailySummary(c *gin.Context) {
+	total, err := CalculateTotalNutrientsForToday()
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, total)
+}
+
 // Funktion für Gesamtnährwerte eines bestimmten Tags
 func CalculateTotalNutrientsForToday() (Nutrients, error) {
 	var data DailyFood

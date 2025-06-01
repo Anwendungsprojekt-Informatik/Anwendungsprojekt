@@ -165,30 +165,30 @@
     </div>
 
     <div class="nutrient-bar">
-      <label>Fette</label>
+      <label>Protein</label>
       <div class="bar-bg">
-        <div class="bar-fill" style="width: 60%;"></div>
+        <div class="bar-fill protein" style="width: 0%;"></div>
       </div>
     </div>
 
     <div class="nutrient-bar">
-      <label>Zucker</label>
+      <label>Fette</label>
       <div class="bar-bg">
-        <div class="bar-fill" style="width: 45%;"></div>
+        <div class="bar-fill fat" style="width: 0%;"></div>
       </div>
     </div>
 
     <div class="nutrient-bar">
       <label>Kohlenhydrate</label>
       <div class="bar-bg">
-        <div class="bar-fill" style="width: 70%;"></div>
+        <div class="bar-fill carbs" style="width: 0%;"></div>
       </div>
     </div>
 
     <div class="nutrient-bar">
-      <label>Protein</label>
+      <label>Zucker</label>
       <div class="bar-bg">
-        <div class="bar-fill" style="width: 35%;"></div>
+        <div class="bar-fill sugar" style="width: 35%;"></div>
       </div>
     </div>
 
@@ -203,6 +203,35 @@
   <script>
     function toggleMenu() {
       document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    // Funktion zum aktualisieren der Balken
+    function updateBars(nutrients) {
+      const kcalFromFat = nutrients.fat * 9;
+      const kcalFromProtein = nutrients.protein * 4;
+      const kcalFromCarbs = nutrients.carbs * 4;
+      const totalKcal = kcalFromFat + kcalFromProtein + kcalFromCarbs;
+
+      const fatPercent = (kcalFromFat / totalKcal) * 100;
+      const proteinPercent = (kcalFromProtein / totalKcal) * 100;
+      const carbsPercent = (kcalFromCarbs / totalKcal) * 100;
+      const sugarPercent = (nutrients.sugar * 4 / totalKcal) * 100;
+
+      document.querySelector(".bar-fill.fat").style.width = fatPercent + "%";
+      document.querySelector(".bar-fill.protein").style.width = proteinPercent + "%";
+      document.querySelector(".bar-fill.carbs").style.width = carbsPercent + "%";
+      document.querySelector(".bar-fill.sugar").style.width = sugarPercent + "%";
+    }
+
+    // API Aufruf für aktuelle Daten der täglichen Nährwerte
+    function loadNutrients() {
+      fetch("/api/daily-summary")
+        .then(res => {
+          if (!res.ok) throw new Error("Fehler beim Abrufen der Tageswerte");
+          return res.json();
+        })
+        .then(data => updateBars(data))
+        .catch(err => console.error("API-Fehler:", err));
     }
 
     // Beispiel: zeige Warnung wenn ein Nährwert überschritten ist

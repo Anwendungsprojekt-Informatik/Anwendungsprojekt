@@ -66,7 +66,7 @@ func main() {
 			c.JSON(http.StatusOK, p)
 		})
 
-		// c) Produkte hinzufügen: POST /api/daily-entries
+		// d) Produkte hinzufügen: POST /api/daily-entries
 		apiGroup.POST("/daily-entries", middleware.HandleDailyEntries)
 	}
 
