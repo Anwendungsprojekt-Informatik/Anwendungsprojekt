@@ -68,6 +68,9 @@ func main() {
 
 		// d) Produkte hinzufügen: POST /api/daily-entries
 		apiGroup.POST("/daily-entries", middleware.HandleDailyEntries)
+
+		// e) DailySummary Home: GET /api/daily-summary
+		apiGroup.GET("/daily-summary", middleware.HandleDailySummary)
 	}
 
 	// ---------------------------------------------------
