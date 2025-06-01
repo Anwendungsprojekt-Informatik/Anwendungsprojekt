@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/Anwendungsprojekt-Informatik/Anwendungsprojekt/api"
+	"github.com/Anwendungsprojekt-Informatik/Anwendungsprojekt/middleware"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/time/rate"
 )
@@ -120,6 +121,12 @@ func main() {
 				})
 			},
 		)
+
+		// d) Produkte hinzufügen: POST /api/daily-entries
+		apiGroup.POST("/daily-entries", middleware.HandleDailyEntries)
+
+		// e) DailySummary Home: GET /api/daily-summary
+		apiGroup.GET("/daily-summary", middleware.HandleDailySummary)
 	}
 
 	// ---------------------------------------------------

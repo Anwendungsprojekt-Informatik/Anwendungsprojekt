@@ -453,10 +453,32 @@
     function handleSaveClick() {
       // Platzhalter für spätere Speicherfunktion
       const cards = document.querySelectorAll(".product-card");
+      const entries = [];
+
       cards.forEach((card, index) => {
-        
+        const name = card.querySelector("h3").textContent;
+        const kcal = parseFloat(card.querySelector(".result.kcal").textContent) || 0;
+        const fat = parseFloat(card.querySelector(".result.fat").textContent) || 0;
+        const sugar = parseFloat(card.querySelector(".result.sugar").textContent) || 0;
+        const carbs = parseFloat(card.querySelector(".result.carbs").textContent) || 0;
+        const protein = parseFloat(card.querySelector(".result.protein").textContent) || 0;
+
+        entries.push({ name, kcal, fat, sugar, carbs, protein});
       });
-      console.log("Speichern-Button wurde geklickt – Funktion folgt.");
+
+      fetch("/middleware/daily-entries",{
+        method: "POST",
+        headers: { "Content-Type": "application/json"},
+        body: JSON.string
+      })
+      .then(res => {
+        if (!res.ok) throw new Error("Fehler beim Speichern");
+        alert("Produkte erfolgreich gespeichert!");
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Fehler beim Speichern der Produkte");
+      });
     }
   </script>
 
