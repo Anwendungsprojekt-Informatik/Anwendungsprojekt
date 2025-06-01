@@ -8,6 +8,10 @@
     :root {
       --primary: #4CAF50;
       --bg: #f4f4f4;
+      --card-bg: #ffffff;
+      --card-shadow: rgba(0, 0, 0, 0.1);
+      --text-color: #333333;
+      --heading-color: #222222;
     }
     * {
       box-sizing: border-box;
@@ -16,7 +20,8 @@
       margin: 0;
       font-family: Arial, sans-serif;
       background-color: var(--bg);
-      color: #333;
+      color: var(--text-color);
+      line-height: 1.6;
     }
     header {
       display: flex;
@@ -48,12 +53,43 @@
     .sidebar nav a {
       display: block;
       color: white;
-      padding: 1rem 0;
+      padding: 0.75rem 0;
       text-decoration: none;
       border-bottom: 1px solid #555;
     }
     .content {
-      padding: 1rem;
+      padding: 2rem 1rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h3 {
+      margin-bottom: 1rem;
+      color: var(--heading-color);
+      font-size: 1.5rem;
+    }
+    .info-card {
+      background-color: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px var(--card-shadow);
+    }
+    .info-card p {
+      margin: 0 0 1rem;
+    }
+    .info-card p:last-child {
+      margin-bottom: 0;
+    }
+    .openfood-logo {
+      display: block;
+      margin: 1rem auto 0;
+      max-width: 180px;
+    }
+    a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -78,8 +114,30 @@
   </header>
 
   <div class="content">
-    <h3>Willkommen auf der Infoseite</h3>
-    <p>Hier kannst du allgemeine Informationen zu SmartNutrition hinterlegen, z. B. Version, Entwicklerkontakte usw.</p>
+    <div class="info-card">
+      <p>
+        Dieses Projekt, <strong>SmartNutrition – Nährwert Rechner</strong>, ist ein Anwendungsprojekt des Studiums an der DHBW Mosbach. 
+        Es wurde von Daniel Schmal, Marvin Gottfried und Leon Kessel erstellt und von Herrn Stumpf betreut. 
+        Durchgeführt wurde das Vorhaben im ersten und zweiten Semester.
+      </p>
+      <p>
+        Credits an OpenFoodFacts – wir nutzen ihre API.
+      </p>
+      <img 
+        src="https://static.openfoodfacts.org/images/logos/off-logo-horizontal-light.svg" 
+        alt="OpenFoodFacts Logo" 
+        class="openfood-logo"
+      >
+      <p style="text-align: center; margin-top: 0.5rem;">
+        <a 
+          href="https://openfoodfacts.github.io/openfoodfacts-server/api/" 
+          target="_blank" 
+          rel="noopener"
+        >
+          OpenFoodFacts API Dokumentation
+        </a>
+      </p>
+    </div>
   </div>
 
   <script>
