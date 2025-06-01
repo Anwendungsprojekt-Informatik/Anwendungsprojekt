@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rezept erstellen</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-color: #e0e0e0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .phone-frame {
+      width: 390px;
+      height: 844px;
+      background-color: #ffffff;
+      border: 16px solid #000000;
+      border-radius: 40px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .phone-notch {
+      width: 120px;
+      height: 30px;
+      background-color: #000;
+      border-radius: 0 0 20px 20px;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+    }
+
+    .phone-content {
+      padding: 20px;
+      margin-top: 40px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    #menue-icon, #konto-icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    input[type="text"], textarea {
+      padding: 12px;
+      border-radius: 15px;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+      font-size: 14px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .zutaten-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .zutaten-input-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .zutaten-input-row input {
+      flex: 1;
+    }
+
+    .zutaten-input-row img {
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+    }
+
+    .zutaten-liste {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .zutat-item {
+      display: flex;
+      justify-content: space-between;
+      background-color: #f1f1f1;
+      padding: 8px 12px;
+      border-radius: 10px;
+      align-items: center;
+    }
+
+    .zutat-item span {
+      flex: 1;
+    }
+
+    .zutat-item button {
+      background: none;
+      border: none;
+      font-size: 16px;
+      color: red;
+      cursor: pointer;
+    }
+
+    button[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="phone-notch"></div>
+  <div class="phone-content">
+
+    <div class="header">
+      <a href="Home.html">
+        <img id="menue-icon" src="https://cdn-icons-png.flaticon.com/512/1828/1828859.png" alt="Menü">
+      </a>
+      <a href="User.html"> <img id="konto-icon" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Konto"></a>
+    </div>
+
+    <h2>Rezept erstellen</h2>
+
+    <form onsubmit="event.preventDefault(); alert('Rezept gespeichert!');">
+
+      <input type="text" placeholder="Rezepttitel" required />
+
+      <div class="zutaten-section">
+        <div class="zutaten-input-row">
+          <input type="text" id="zutatInput" placeholder="Zutat hinzufügen..." />
+          <img src="https://cdn-icons-png.flaticon.com/512/10437/10437971.png" alt="Barcode-Scan" title="Barcode scannen" onclick="scanBarcode()" />
+          <button type="button" onclick="addZutat()">➕</button>
+        </div>
+        <div class="zutaten-liste" id="zutatenListe">
+          <!-- Zutaten erscheinen hier -->
+        </div>
+      </div>
+
+      <textarea placeholder="Zubereitungsschritte" required></textarea>
+
+      <button type="submit">Speichern</button>
+    </form>
+
+  </div>
+</div>
+
+<script>
+  function addZutat() {
+    const input = document.getElementById("zutatInput");
+    const value = input.value.trim();
+    if (value === "") return;
+
+    const liste = document.getElementById("zutatenListe");
+
+    const item = document.createElement("div");
+    item.className = "zutat-item";
+
+    const name = document.createElement("span");
+    name.textContent = value;
+
+    const removeBtn = document.createElement("button");
+    removeBtn.innerHTML = "✖";
+    removeBtn.onclick = () => item.remove();
+
+    item.appendChild(name);
+    item.appendChild(removeBtn);
+    liste.appendChild(item);
+
+    input.value = "";
+  }
+
+  function scanBarcode() {
+    alert("Barcode-Scanner Funktion folgt bald.");
+  }
+</script>
+
+</body>
+</html>
