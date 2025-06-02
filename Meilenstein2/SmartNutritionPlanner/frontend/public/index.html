@@ -253,7 +253,7 @@
     const kcalFromFat = nutrients.fat * 9;
     const kcalFromProtein = nutrients.protein * 4;
     const kcalFromCarbs = nutrients.carbs * 4;
-    const totalKcal = kcalFromFat + kcalFromProtein + kcalFromCarbs;
+    const totalKcal = nutrients.calories;
 
     // Wenn keine Kalorien mehr übrig sind (z.B. letzter Eintrag gelöscht), alle Balken auf 0 setzen
     if (totalKcal === 0) {
@@ -287,7 +287,7 @@
     if (storedData) {
       const userData = JSON.parse(storedData);
       const kcalTarget = parseFloat(userData.kcalTarget);
-      const consumed = kcalFromFat + kcalFromProtein + kcalFromCarbs;
+      const consumed = totalKcal;
       const percentage = (consumed / kcalTarget) * 100;
       const circle = document.getElementById("calorieCircle");
       circle.innerHTML = `${consumed} / ${kcalTarget} kcal`;
