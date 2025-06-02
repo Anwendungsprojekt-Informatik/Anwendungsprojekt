@@ -248,36 +248,53 @@
       document.getElementById('sidebar').classList.toggle('active');
     }
 
-    // Funktion zum aktualisieren der Balken
-    function updateBars(nutrients) {
-      const kcalFromFat = nutrients.fat * 9;
-      const kcalFromProtein = nutrients.protein * 4;
-      const kcalFromCarbs = nutrients.carbs * 4;
-      const totalKcal = kcalFromFat + kcalFromProtein + kcalFromCarbs;
+  // Funktion zum aktualisieren der Balken
+  function updateBars(nutrients) {
+    const kcalFromFat = nutrients.fat * 9;
+    const kcalFromProtein = nutrients.protein * 4;
+    const kcalFromCarbs = nutrients.carbs * 4;
+    const totalKcal = kcalFromFat + kcalFromProtein + kcalFromCarbs;
 
-      const fatPercent = (kcalFromFat / totalKcal) * 100;
-      const proteinPercent = (kcalFromProtein / totalKcal) * 100;
-      const carbsPercent = (kcalFromCarbs / totalKcal) * 100;
-      const sugarPercent = (nutrients.sugar * 4 / totalKcal) * 100;
+    // Wenn keine Kalorien mehr übrig sind (z.B. letzter Eintrag gelöscht), alle Balken auf 0 setzen
+    if (totalKcal === 0) {
+      document.querySelector(".bar-fill.fat").style.width = "0%";
+      document.querySelector(".bar-fill.protein").style.width = "0%";
+      document.querySelector(".bar-fill.carbs").style.width = "0%";
+      document.querySelector(".bar-fill.sugar").style.width = "0%";
 
-      document.querySelector(".bar-fill.fat").style.width = fatPercent + "%";
-      document.querySelector(".bar-fill.protein").style.width = proteinPercent + "%";
-      document.querySelector(".bar-fill.carbs").style.width = carbsPercent + "%";
-      document.querySelector(".bar-fill.sugar").style.width = sugarPercent + "%";
-      
-      
       const storedData = localStorage.getItem("userData");
-
-      if(storedData) {
+      if (storedData) {
         const userData = JSON.parse(storedData);
         const kcalTarget = parseFloat(userData.kcalTarget);
-        const openCalories = kcalTarget - totalKcal;
         const circle = document.getElementById("calorieCircle");
-        circle.innerHTML = `${kcalTarget - openCalories} / ${kcalTarget} kcal`;
-        const percentage = ((kcalTarget - openCalories) / kcalTarget) * 100;
-        circle.style.background = `conic-gradient(var(--primary) ${percentage}%, #ddd 0)`;
+        circle.innerHTML = `0 / ${kcalTarget} kcal`;
+        circle.style.background = `conic-gradient(var(--primary) 0%, #ddd 0)`;
       }
+      return;
     }
+
+    const fatPercent = (kcalFromFat / totalKcal) * 100;
+    const proteinPercent = (kcalFromProtein / totalKcal) * 100;
+    const carbsPercent = (kcalFromCarbs / totalKcal) * 100;
+    const sugarPercent = (nutrients.sugar * 4 / totalKcal) * 100;
+
+    document.querySelector(".bar-fill.fat").style.width = fatPercent + "%";
+    document.querySelector(".bar-fill.protein").style.width = proteinPercent + "%";
+    document.querySelector(".bar-fill.carbs").style.width = carbsPercent + "%";
+    document.querySelector(".bar-fill.sugar").style.width = sugarPercent + "%";
+
+    const storedData = localStorage.getItem("userData");
+    if (storedData) {
+      const userData = JSON.parse(storedData);
+      const kcalTarget = parseFloat(userData.kcalTarget);
+      const consumed = kcalFromFat + kcalFromProtein + kcalFromCarbs;
+      const percentage = (consumed / kcalTarget) * 100;
+      const circle = document.getElementById("calorieCircle");
+      circle.innerHTML = `${consumed} / ${kcalTarget} kcal`;
+      circle.style.background = `conic-gradient(var(--primary) ${percentage}%, #ddd 0)`;
+    }
+  }
+
 
     // API Aufruf für aktuelle Daten der täglichen Nährwerte
     function loadNutrients() {
@@ -345,13 +362,13 @@
         .then(res => {
           if (!res.ok) throw new Error("Löschen fehlgeschlagen");
           li.remove(); // nur bei Erfolg im Backend visuell löschen
+          loadNutrients();
+          loadEatenList();
         })
         .catch(err => {
           console.error(err);
           alert("Fehler beim Löschen");
         });
-      loadNutrients();
-      loadEatenList();
     }
 
     // Beispiel: zeige Warnung wenn ein Nährwert überschritten ist
