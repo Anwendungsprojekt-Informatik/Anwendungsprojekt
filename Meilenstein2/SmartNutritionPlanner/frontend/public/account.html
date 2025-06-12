@@ -6,8 +6,9 @@
   <title>Konto</title>
   <style>
     :root {
-      --primary: #4CAF50;
-      --bg: #f4f4f4;
+      --primary: #87CEFA; /* Himmelblau */
+      --bg: #f0f8ff;
+      --text: #333;
     }
 
     * {
@@ -16,9 +17,9 @@
 
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background-color: var(--bg);
-      color: #333;
+      color: var(--text);
     }
 
     header {
@@ -28,6 +29,7 @@
       padding: 1rem;
       background-color: var(--primary);
       color: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
     .menu-icon {
@@ -41,7 +43,7 @@
       left: -70%;
       width: 70%;
       height: 100%;
-      background-color: #333;
+      background-color: #2a2a2a;
       color: white;
       padding: 2rem 1rem;
       transition: left 0.3s ease-in-out;
@@ -62,6 +64,12 @@
 
     .section {
       padding: 1.5rem;
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      margin-top: 2rem;
     }
 
     .user-icon {
@@ -78,14 +86,21 @@
       display: block;
       font-weight: bold;
       margin-bottom: 0.3rem;
+      color: #555;
     }
 
     input, select {
       width: 100%;
-      padding: 0.5rem;
+      padding: 0.6rem;
       font-size: 1rem;
-      border-radius: 5px;
+      border-radius: 8px;
       border: 1px solid #ccc;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary);
+      outline: none;
     }
 
     .btn-row {
@@ -99,16 +114,26 @@
       padding: 0.7rem;
       font-size: 1rem;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
       color: white;
+      cursor: pointer;
+      transition: background 0.3s;
     }
 
     .btn-edit {
       background-color: #888;
     }
 
+    .btn-edit:hover {
+      background-color: #666;
+    }
+
     .btn-save {
       background-color: var(--primary);
+    }
+
+    .btn-save:hover {
+      background-color: #6bbdf4;
     }
   </style>
 </head>

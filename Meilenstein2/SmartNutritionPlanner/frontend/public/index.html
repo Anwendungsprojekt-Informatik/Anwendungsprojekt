@@ -6,8 +6,8 @@
   <title>SmartNutrition - Home</title>
   <style>
     :root {
-      --primary: #4CAF50;
-      --bg: #f4f4f4;
+      --primary: #87CEFA; /* Baby/Himmelblau */
+      --bg: #f0f8ff;
       --danger: #d32f2f;
     }
 
@@ -20,7 +20,7 @@
     body {
       font-family: 'Segoe UI', sans-serif;
       background: var(--bg);
-      color: #333;
+      color: #222;
       padding-bottom: 80px;
     }
 
@@ -30,6 +30,7 @@
       padding: 1rem;
       background-color: var(--primary);
       color: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
     .menu-icon {
@@ -43,7 +44,7 @@
       left: -70%;
       width: 70%;
       height: 100%;
-      background-color: #333;
+      background-color: #2a2a2a;
       color: white;
       padding: 2rem 1rem;
       transition: left 0.3s ease-in-out;
@@ -69,18 +70,33 @@
     }
 
     .circle {
-      width: 60vw;
-      max-width: 250px;
-      aspect-ratio: 1/1;
+      position: relative;
+      width: 250px;
+      height: 250px;
+      margin: 2rem auto;
       border-radius: 50%;
-      background: conic-gradient(var(--primary) 0%, #ddd 0);
+      background: #e0f7ff;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 2rem auto;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .circle::before {
+      content: '';
+      position: absolute;
+      width: 90%;
+      height: 90%;
+      border-radius: 50%;
+      background: conic-gradient(var(--primary) 0%, #ddd 0);
+      z-index: 1;
+    }
+
+    .circle span {
+      position: relative;
+      z-index: 2;
       font-size: 1.2rem;
       font-weight: bold;
-      color: #222;
     }
 
     .nutrient-bar {
@@ -118,7 +134,7 @@
     #eatenList li {
       background: white;
       padding: 0.8rem;
-      border-radius: 8px;
+      border-radius: 10px;
       margin-bottom: 0.5rem;
       display: flex;
       justify-content: space-between;
@@ -160,6 +176,10 @@
 
     @media (max-width: 400px) {
       .circle {
+        width: 200px;
+        height: 200px;
+      }
+      .circle span {
         font-size: 1rem;
       }
     }
@@ -210,7 +230,7 @@
     </div>
 
     <div class="nutrient-bar">
-      <label>Zucker</label>
+      <label style="font-size: 13px;">davon Zucker</label>
       <div class="bar-bg">
         <div class="bar-fill sugar" style="width: 0%;"></div>
       </div>

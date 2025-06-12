@@ -6,9 +6,9 @@
   <title>Produkt hinzufügen</title>
   <style>
     :root {
-      --primary: #4CAF50;
+      --primary: #87CEFA;
       --danger: #d32f2f;
-      --bg: #f4f4f4;
+      --bg: #f0f8ff;
     }
 
     * {
@@ -17,7 +17,7 @@
 
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background-color: var(--bg);
       color: #333;
       padding-bottom: 120px;
@@ -30,6 +30,7 @@
       padding: 1rem;
       background-color: var(--primary);
       color: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
     .menu-icon {
@@ -43,7 +44,7 @@
       left: -70%;
       width: 70%;
       height: 100%;
-      background-color: #333;
+      background-color: #2a2a2a;
       color: white;
       padding: 2rem 1rem;
       transition: left 0.3s ease-in-out;
@@ -75,21 +76,21 @@
       padding: 0.5rem;
       font-size: 1rem;
       border: 1px solid #ccc;
-      border-radius: 5px;
+      border-radius: 8px;
     }
 
     .search-section button {
       background: var(--primary);
       border: none;
       padding: 0.5rem 0.8rem;
-      border-radius: 5px;
+      border-radius: 8px;
       color: white;
       font-size: 1.2rem;
       cursor: pointer;
     }
 
     .search-section button.camera-btn {
-      background: none;
+      background: white;
       font-size: 1.5rem;
       display: flex;
       align-items: center;
@@ -105,6 +106,7 @@
       border: none;
       cursor: pointer;
       font-size: 1.3rem;
+      color: white;
     }
 
     .card-list {
@@ -117,7 +119,8 @@
     .section-title {
       font-weight: bold;
       margin: 1rem 1rem 0.3rem;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
+      color: #555;
     }
 
     .product-card {
@@ -145,6 +148,8 @@
       padding: 0.3rem;
       font-size: 0.9rem;
       margin-left: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
     }
 
     .remove-icon {
@@ -169,47 +174,39 @@
       background-color: var(--primary);
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
     }
 
-    /* Zusätzlicher Stil für Barcode-Ergebnis */
     .barcode-result {
-      margin-top: 1rem;
+      margin: 1rem;
       padding: 1rem;
-      background: #eef9f1;
+      background: #e0f7ff;
       border-left: 5px solid var(--primary);
-      border-radius: 5px;
+      border-radius: 8px;
     }
 
     .barcode-result p {
       margin: 0.3rem 0;
     }
 
-    /* Button zum Abspeichern der ausgewählten Produkte*/
     .save-button {
       display: inline-flex;
       align-items: center;
-      background-color: #28a745; /* Grün */
+      background-color: var(--primary);
       color: white;
       border: none;
       border-radius: 12px;
       padding: 10px 16px;
       font-size: 16px;
-      /*cursor: pointer;*/
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
       transition: background-color 0.3s ease;
+      margin: 1rem;
+      cursor: pointer;
     }
 
     .save-button:hover {
-      background-color: #218838;
-    }
-
-    .save-icon {
-      width: 18px;
-      height: 18px;
-      margin-right: 8px;
-      fill: white;
+      background-color: #6bbdf4;
     }
   </style>
 </head>
