@@ -236,10 +236,17 @@
       <div class="bar-bg"><div class="bar-fill sugar"></div></div>
     </div>
 
-    <div class="warning" id="warningBox">
-      ⚠️ Du hast dein Zuckerlimit überschritten!
+    <div class="warning" id="warningBox1" style="display: none; color: red;">
+      ⚠️ Zu viel Zucker!
     </div>
-  </div>
+
+    <div class="warning" id="warningBox2" style="display:none; color: red;">
+      ⚠️ Zu viel Fett!
+    </div>
+
+    <div class="warning" id="warningBox3" style="display:none; color: red;">
+      ⚠️ Zu wenig Protein!
+    </div>
 
   <div class="eaten-section">
     <h3 style="margin-left: 20px;">Heute gegessen</h3>
@@ -300,6 +307,8 @@
       const percentage = (consumed / kcalTarget) * 100;
       text.textContent = `${consumed} / ${kcalTarget} kcal`;
       circle.style.background = `conic-gradient(var(--primary) ${percentage}%, #ddd 0)`;
+
+      checkNutritionWarnings(nutrients.sugar, nutrients.fat, nutrients.protein, nutrients.calories)
     }
 
     function loadNutrients() {
@@ -363,9 +372,28 @@
     }
 
     // Optional: Dynamische Anzeige der Warnung
-    const showWarning = true;
-    if (showWarning) {
-      document.getElementById('warningBox').style.display = 'block';
+    function checkNutritionWarnings(zucker, fett, protein, calories) {
+      const userData = JSON.parse(localStorage.getItem("userData"));
+      if (!userData || !userData.dietOptions) return;
+
+      const showWarning = (id, condition) => {
+        const el = document.getElementById(id);
+        el.style.display = condition ? 'block' : 'none';
+      };
+
+      const { protein: proteinOn, lowSugar, lowFat } = userData.dietOptions;
+
+      const proteinKcal = protein * 4;
+      const proteinRelation = (proteinKcal / calories) * 100;
+
+      // Zuckerwarnung
+      showWarning("warningBox1", lowSugar && zucker > 50);
+
+      // Fettwarnung
+      showWarning("warningBox2", lowFat && fett > 70);
+
+      // Proteinwarnung
+      showWarning("warningBox3", proteinOn && proteinRelation < 30);
     }
   </script>
 </body>
