@@ -63,6 +63,22 @@
           "sugar": 10,
           "carbs": 80,
           "protein": 25
+        },
+        {
+          "name": "Rindersteak mit Kartoffeln und Salat",
+          "kcal": 700,
+          "fat": 35,
+          "sugar": 3.6,
+          "carbs": 50,
+          "protein": 50
+        },
+        {
+          "name": "Hähnchenbrust mit Reis und Gemüse",
+          "kcal": 600,
+          "fat": 15,
+          "sugar": 2.5,
+          "carbs": 60,
+          "protein": 45
         }
       ]
     }
