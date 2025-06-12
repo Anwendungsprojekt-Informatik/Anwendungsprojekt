@@ -63,6 +63,14 @@
           "sugar": 10,
           "carbs": 80,
           "protein": 25
+        },
+        {
+          "name": "Haferbrei mit Banane",
+          "kcal": 350,
+          "fat": 8,
+          "sugar": 25,
+          "carbs": 60,
+          "protein": 12
         }
       ]
     }
