@@ -6,7 +6,7 @@
   <title>Konto</title>
   <style>
     :root {
-      --primary: #87CEFA; /* Himmelblau */
+      --primary: #87CEFA;
       --bg: #f0f8ff;
       --text: #333;
     }
@@ -23,9 +23,10 @@
     }
 
     header {
+      position: relative;
       display: flex;
+      justify-content: center;
       align-items: center;
-      justify-content: space-between;
       padding: 1rem;
       background-color: var(--primary);
       color: white;
@@ -33,6 +34,8 @@
     }
 
     .menu-icon {
+      position: absolute;
+      left: 1rem;
       font-size: 1.5rem;
       cursor: pointer;
     }
@@ -98,9 +101,21 @@
       transition: border-color 0.2s;
     }
 
+    input[type="checkbox"] {
+      width: auto;
+      margin-right: 0.5rem;
+    }
+
     input:focus, select:focus {
       border-color: var(--primary);
       outline: none;
+    }
+
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      font-weight: normal;
     }
 
     .btn-row {
@@ -139,7 +154,6 @@
 </head>
 <body>
 
-  <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
     <nav>
       <a href="/public/index.html">Home</a>
@@ -152,13 +166,11 @@
     </nav>
   </div>
 
-  <!-- Header -->
   <header>
     <span class="menu-icon" onclick="toggleMenu()">☰</span>
     <h2>Mein Konto</h2>
   </header>
 
-  <!-- Inhalt -->
   <div class="section">
     <div class="user-icon">👤</div>
 
@@ -207,6 +219,15 @@
       </select>
     </div>
 
+    <div class="field">
+      <label>Ernährungsweise</label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" id="protein" disabled> Proteinreich</label>
+        <label><input type="checkbox" id="lowSugar" disabled> Zuckerarm</label>
+        <label><input type="checkbox" id="lowFat" disabled> Fettarm</label>
+      </div>
+    </div>
+
     <div class="btn-row">
       <button class="btn-edit" onclick="toggleEdit()">✏️ Bearbeiten</button>
       <button class="btn-save" onclick="saveData()">💾 Speichern</button>
@@ -231,7 +252,12 @@
         height: document.getElementById("height").value,
         weight: document.getElementById("weight").value,
         kcalTarget: document.getElementById("kcalTarget").value,
-        dietType: document.getElementById("dietType").value
+        dietType: document.getElementById("dietType").value,
+        dietOptions: {
+          protein: document.getElementById("protein").checked,
+          lowSugar: document.getElementById("lowSugar").checked,
+          lowFat: document.getElementById("lowFat").checked
+        }
       };
       localStorage.setItem("userData", JSON.stringify(userData));
       alert("Daten gespeichert!");
@@ -240,7 +266,6 @@
     function loadData() {
       const data = JSON.parse(localStorage.getItem("userData") || "{}");
       if (!data) return;
-
       document.getElementById("name").value = data.name || "";
       document.getElementById("age").value = data.age || "";
       document.getElementById("gender").value = data.gender || "";
@@ -248,6 +273,11 @@
       document.getElementById("weight").value = data.weight || "";
       document.getElementById("kcalTarget").value = data.kcalTarget || "";
       document.getElementById("dietType").value = data.dietType || "";
+      if (data.dietOptions) {
+        document.getElementById("protein").checked = data.dietOptions.protein || false;
+        document.getElementById("lowSugar").checked = data.dietOptions.lowSugar || false;
+        document.getElementById("lowFat").checked = data.dietOptions.lowFat || false;
+      }
     }
 
     loadData();

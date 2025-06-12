@@ -52,6 +52,19 @@
     {
       "date": "2025-06-11",
       "entries": []
+    },
+    {
+      "date": "2025-06-12",
+      "entries": [
+        {
+          "name": "Linsensuppe mit Vollkornbrot",
+          "kcal": 500,
+          "fat": 6,
+          "sugar": 10,
+          "carbs": 80,
+          "protein": 25
+        }
+      ]
     }
   ]
 }

@@ -183,12 +183,20 @@
         font-size: 1rem;
       }
     }
+    .circle.over {
+  background: #ffe5e5 !important;
+}
+
+.circle.over::before {
+  background: conic-gradient(var(--danger) var(--percent), #ddd 0);
+}
+
   </style>
 </head>
 <body>
   <header>
     <span class="menu-icon" onclick="toggleMenu()">☰</span>
-    <h1 style="margin-left: 1rem; font-size: 1.2rem;">SmartNutrition</h1>
+    <h1 style="margin-left: 100px; font-size: 1.2rem;">SmartNutrition</h1>
   </header>
 
   <!-- Sidebar -->
@@ -242,7 +250,7 @@
   </div>
 
   <div class="eaten-section">
-      <h3>Heute gegessen</h3>
+      <h3 style="margin-left: 20px;">Heute gegessen</h3>
       <ul id="eatenList">
       </ul>
     </div>

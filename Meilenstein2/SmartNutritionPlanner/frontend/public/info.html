@@ -24,18 +24,23 @@
       line-height: 1.6;
     }
     header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem;
-      background-color: var(--primary);
-      color: white;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    .menu-icon {
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--primary);
+  color: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.menu-icon {
+  position: absolute;
+  left: 1rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
     .sidebar {
       position: fixed;
       top: 0;
