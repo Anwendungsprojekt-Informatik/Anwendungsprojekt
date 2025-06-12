@@ -272,44 +272,56 @@
     }
 
     function updateBars(nutrients) {
-      const kcalFromFat = nutrients.fat * 9;
-      const kcalFromProtein = nutrients.protein * 4;
-      const kcalFromCarbs = nutrients.carbs * 4;
-      const totalKcal = nutrients.calories;
+  const kcalFromFat     = nutrients.fat * 9;
+  const kcalFromProtein = nutrients.protein * 4;
+  const kcalFromCarbs   = nutrients.carbs * 4;
+  const totalKcal       = nutrients.calories;
 
-      const circle = document.getElementById("calorieCircle");
-      const text = document.getElementById("calorieText");
-      const storedData = localStorage.getItem("userData");
-      const userData = storedData ? JSON.parse(storedData) : {};
-      const kcalTarget = parseFloat(userData.kcalTarget || 0);
+  const circle     = document.getElementById("calorieCircle");
+  const text       = document.getElementById("calorieText");
+  const storedData = localStorage.getItem("userData");
+  const userData   = storedData ? JSON.parse(storedData) : {};
+  const kcalTarget = parseFloat(userData.kcalTarget || 0);
 
-      if (totalKcal === 0) {
-        text.textContent = `0 / ${kcalTarget} kcal`;
-        circle.style.background = `conic-gradient(var(--primary) 0%, #ddd 0)`;
-        document.querySelector(".bar-fill.fat").style.width = "0%";
-        document.querySelector(".bar-fill.protein").style.width = "0%";
-        document.querySelector(".bar-fill.carbs").style.width = "0%";
-        document.querySelector(".bar-fill.sugar").style.width = "0%";
-        return;
-      }
+  // Zurücksetzen, wenn noch keine Kalorien
+  if (totalKcal === 0) {
+    text.textContent = `0 / ${kcalTarget} kcal`;
+    circle.style.background = `conic-gradient(var(--primary) 0%, #ddd 0)`;
+    document.querySelector(".bar-fill.fat").style.width     = "0%";
+    document.querySelector(".bar-fill.protein").style.width = "0%";
+    document.querySelector(".bar-fill.carbs").style.width    = "0%";
+    document.querySelector(".bar-fill.sugar").style.width   = "0%";
+    return;
+  }
 
-      const fatPercent = (kcalFromFat / totalKcal) * 100;
-      const proteinPercent = (kcalFromProtein / totalKcal) * 100;
-      const carbsPercent = (kcalFromCarbs / totalKcal) * 100;
-      const sugarPercent = (nutrients.sugar * 4 / totalKcal) * 100;
+  // Nährstoff-Anteile
+  const fatPercent     = (kcalFromFat     / totalKcal) * 100;
+  const proteinPercent = (kcalFromProtein / totalKcal) * 100;
+  const carbsPercent   = (kcalFromCarbs   / totalKcal) * 100;
+  const sugarPercent   = (nutrients.sugar * 4 / totalKcal) * 100;
 
-      document.querySelector(".bar-fill.fat").style.width = fatPercent + "%";
-      document.querySelector(".bar-fill.protein").style.width = proteinPercent + "%";
-      document.querySelector(".bar-fill.carbs").style.width = carbsPercent + "%";
-      document.querySelector(".bar-fill.sugar").style.width = sugarPercent + "%";
+  document.querySelector(".bar-fill.fat").style.width     = fatPercent     + "%";
+  document.querySelector(".bar-fill.protein").style.width = proteinPercent + "%";
+  document.querySelector(".bar-fill.carbs").style.width    = carbsPercent   + "%";
+  document.querySelector(".bar-fill.sugar").style.width   = sugarPercent   + "%";
 
-      const consumed = totalKcal;
-      const percentage = (consumed / kcalTarget) * 100;
-      text.textContent = `${consumed} / ${kcalTarget} kcal`;
-      circle.style.background = `conic-gradient(var(--primary) ${percentage}%, #ddd 0)`;
+  // Kalorienverbrauch und Prozent
+  const consumed   = totalKcal;
+  const percentage = (consumed / kcalTarget) * 100;
+  text.textContent = `${consumed} / ${kcalTarget} kcal`;
 
-      checkNutritionWarnings(nutrients.sugar, nutrients.fat, nutrients.protein, nutrients.calories)
-    }
+  // Ring-Farbe je nach Überschreitung
+  if (consumed > kcalTarget) {
+    // zu viel: rot
+    circle.style.background = `conic-gradient(var(--danger) ${percentage}%, #ddd 0)`;
+  } else {
+    // im Ziel: blau
+    circle.style.background = `conic-gradient(var(--primary) ${percentage}%, #ddd 0)`;
+  }
+
+  // Warnungen für Zucker, Fett, Protein
+  checkNutritionWarnings(nutrients.sugar, nutrients.fat, nutrients.protein, nutrients.calories);
+}
 
     function loadNutrients() {
       fetch("/api/daily-summary")
@@ -371,30 +383,44 @@
         });
     }
 
-    // Optional: Dynamische Anzeige der Warnung
     function checkNutritionWarnings(zucker, fett, protein, calories) {
       const userData = JSON.parse(localStorage.getItem("userData"));
       if (!userData || !userData.dietOptions) return;
 
+      // CSS-Variablen auslesen
+      const styles = getComputedStyle(document.documentElement);
+      const primaryColor = styles.getPropertyValue('--primary').trim();
+      const dangerColor = styles.getPropertyValue('--danger').trim();
+
+      // Elemente referenzieren
+      const sugarBar   = document.querySelector(".bar-fill.sugar");
+      const fatBar     = document.querySelector(".bar-fill.fat");
+      const proteinBar = document.querySelector(".bar-fill.protein");
+
+      // Shortcut für Ein/Ausblenden
       const showWarning = (id, condition) => {
-        const el = document.getElementById(id);
-        el.style.display = condition ? 'block' : 'none';
+        document.getElementById(id).style.display = condition ? 'block' : 'none';
       };
 
       const { protein: proteinOn, lowSugar, lowFat } = userData.dietOptions;
 
-      const proteinKcal = protein * 4;
-      const proteinRelation = (proteinKcal / calories) * 100;
-
       // Zuckerwarnung
-      showWarning("warningBox1", lowSugar && zucker > 50);
+      const sugarWarn = lowSugar && zucker > 50;
+      showWarning("warningBox1", sugarWarn);
+      sugarBar.style.backgroundColor = sugarWarn ? dangerColor : primaryColor;
 
       // Fettwarnung
-      showWarning("warningBox2", lowFat && fett > 70);
+      const fatWarn = lowFat && fett > 70;
+      showWarning("warningBox2", fatWarn);
+      fatBar.style.backgroundColor = fatWarn ? dangerColor : primaryColor;
 
-      // Proteinwarnung
-      showWarning("warningBox3", proteinOn && proteinRelation < 30);
-    }
+      // Proteinwarnung (zu wenig Protein-Anteil)
+      const proteinKcal     = protein * 4;
+      const proteinRelation = (proteinKcal / calories) * 100;
+      const proteinWarn     = proteinOn && proteinRelation < 30;
+      showWarning("warningBox3", proteinWarn);
+      proteinBar.style.backgroundColor = proteinWarn ? dangerColor : primaryColor;
+}
   </script>
 </body>
 </html>
