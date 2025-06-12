@@ -6,8 +6,8 @@
   <title>Infoseite</title>
   <style>
     :root {
-      --primary: #4CAF50;
-      --bg: #f4f4f4;
+      --primary: #87CEFA;
+      --bg: #f0f8ff;
       --card-bg: #ffffff;
       --card-shadow: rgba(0, 0, 0, 0.1);
       --text-color: #333333;
@@ -18,30 +18,36 @@
     }
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background-color: var(--bg);
       color: var(--text-color);
       line-height: 1.6;
     }
     header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem;
-      background-color: var(--primary);
-      color: white;
-    }
-    .menu-icon {
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--primary);
+  color: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.menu-icon {
+  position: absolute;
+  left: 1rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
     .sidebar {
       position: fixed;
       top: 0;
       left: -70%;
       width: 70%;
       height: 100%;
-      background-color: #333;
+      background-color: #2a2a2a;
       color: white;
       padding: 2rem 1rem;
       transition: left 0.3s ease-in-out;
@@ -70,7 +76,7 @@
     .info-card {
       background-color: var(--card-bg);
       padding: 1.5rem;
-      border-radius: 8px;
+      border-radius: 12px;
       box-shadow: 0 2px 8px var(--card-shadow);
     }
     .info-card p {
@@ -87,6 +93,7 @@
     a {
       color: var(--primary);
       text-decoration: none;
+      font-weight: bold;
     }
     a:hover {
       text-decoration: underline;

@@ -6,8 +6,8 @@
   <title>SmartNutrition - Home</title>
   <style>
     :root {
-      --primary: #4CAF50;
-      --bg: #f4f4f4;
+      --primary: #87CEFA;
+      --bg: #f0f8ff;
       --danger: #d32f2f;
     }
 
@@ -20,7 +20,7 @@
     body {
       font-family: 'Segoe UI', sans-serif;
       background: var(--bg);
-      color: #333;
+      color: #222;
       padding-bottom: 80px;
     }
 
@@ -30,6 +30,7 @@
       padding: 1rem;
       background-color: var(--primary);
       color: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
     .menu-icon {
@@ -43,7 +44,7 @@
       left: -70%;
       width: 70%;
       height: 100%;
-      background-color: #333;
+      background-color: #2a2a2a;
       color: white;
       padding: 2rem 1rem;
       transition: left 0.3s ease-in-out;
@@ -69,18 +70,41 @@
     }
 
     .circle {
-      width: 60vw;
-      max-width: 250px;
-      aspect-ratio: 1/1;
+      position: relative;
+      width: 250px;
+      height: 250px;
+      margin: 2rem auto;
       border-radius: 50%;
-      background: conic-gradient(var(--primary) 0%, #ddd 0);
+      background: #e0f7ff;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 2rem auto;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .circle::before {
+      content: '';
+      position: absolute;
+      width: 90%;
+      height: 90%;
+      border-radius: 50%;
+      background: conic-gradient(var(--primary) 0%, #ddd 0);
+      z-index: 1;
+    }
+
+    .circle span {
+      position: relative;
+      z-index: 2;
       font-size: 1.2rem;
       font-weight: bold;
-      color: #222;
+    }
+
+    .circle.over {
+      background: #ffe5e5 !important;
+    }
+
+    .circle.over::before {
+      background: conic-gradient(var(--danger) var(--percent), #ddd 0);
     }
 
     .nutrient-bar {
@@ -102,7 +126,7 @@
 
     .bar-fill {
       height: 100%;
-      width: 50%;
+      width: 0%;
       background-color: var(--primary);
       transition: width 0.3s;
     }
@@ -118,7 +142,7 @@
     #eatenList li {
       background: white;
       padding: 0.8rem;
-      border-radius: 8px;
+      border-radius: 10px;
       margin-bottom: 0.5rem;
       display: flex;
       justify-content: space-between;
@@ -160,6 +184,10 @@
 
     @media (max-width: 400px) {
       .circle {
+        width: 200px;
+        height: 200px;
+      }
+      .circle span {
         font-size: 1rem;
       }
     }
@@ -168,10 +196,9 @@
 <body>
   <header>
     <span class="menu-icon" onclick="toggleMenu()">☰</span>
-    <h1 style="margin-left: 1rem; font-size: 1.2rem;">SmartNutrition</h1>
+    <h1 style="margin-left: 100px; font-size: 1.2rem;">SmartNutrition</h1>
   </header>
 
-  <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
     <nav>
       <a href="/public/index.html">Home</a>
@@ -186,34 +213,27 @@
 
   <div class="content">
     <div class="circle" id="calorieCircle">
+      <span id="calorieText">0 / 0 kcal</span>
     </div>
 
     <div class="nutrient-bar">
       <label>Protein</label>
-      <div class="bar-bg">
-        <div class="bar-fill protein" style="width: 0%;"></div>
-      </div>
+      <div class="bar-bg"><div class="bar-fill protein"></div></div>
     </div>
 
     <div class="nutrient-bar">
       <label>Fette</label>
-      <div class="bar-bg">
-        <div class="bar-fill fat" style="width: 0%;"></div>
-      </div>
+      <div class="bar-bg"><div class="bar-fill fat"></div></div>
     </div>
 
     <div class="nutrient-bar">
       <label>Kohlenhydrate</label>
-      <div class="bar-bg">
-        <div class="bar-fill carbs" style="width: 0%;"></div>
-      </div>
+      <div class="bar-bg"><div class="bar-fill carbs"></div></div>
     </div>
 
     <div class="nutrient-bar">
-      <label>Zucker</label>
-      <div class="bar-bg">
-        <div class="bar-fill sugar" style="width: 0%;"></div>
-      </div>
+      <label style="font-size: 13px;">davon Zucker</label>
+      <div class="bar-bg"><div class="bar-fill sugar"></div></div>
     </div>
 
     <div class="warning" id="warningBox">
@@ -222,17 +242,13 @@
   </div>
 
   <div class="eaten-section">
-      <h3>Heute gegessen</h3>
-      <ul id="eatenList">
-      </ul>
-    </div>
+    <h3 style="margin-left: 20px;">Heute gegessen</h3>
+    <ul id="eatenList"></ul>
   </div>
 
-  <!-- „+“-Button führt zu „Artikel hinzufügen“ -->
   <a href="/public/add-product.html" class="add-button">+</a>
 
   <script>
-    //Automatisches ausführen der Nutrients
     window.addEventListener("DOMContentLoaded", () => {
       loadNutrients();
       loadEatenList();
@@ -248,76 +264,58 @@
       document.getElementById('sidebar').classList.toggle('active');
     }
 
-  // Funktion zum aktualisieren der Balken
-  function updateBars(nutrients) {
-    const kcalFromFat = nutrients.fat * 9;
-    const kcalFromProtein = nutrients.protein * 4;
-    const kcalFromCarbs = nutrients.carbs * 4;
-    const totalKcal = nutrients.calories;
+    function updateBars(nutrients) {
+      const kcalFromFat = nutrients.fat * 9;
+      const kcalFromProtein = nutrients.protein * 4;
+      const kcalFromCarbs = nutrients.carbs * 4;
+      const totalKcal = nutrients.calories;
 
-    // Wenn keine Kalorien mehr übrig sind (z.B. letzter Eintrag gelöscht), alle Balken auf 0 setzen
-    if (totalKcal === 0) {
-      document.querySelector(".bar-fill.fat").style.width = "0%";
-      document.querySelector(".bar-fill.protein").style.width = "0%";
-      document.querySelector(".bar-fill.carbs").style.width = "0%";
-      document.querySelector(".bar-fill.sugar").style.width = "0%";
-
+      const circle = document.getElementById("calorieCircle");
+      const text = document.getElementById("calorieText");
       const storedData = localStorage.getItem("userData");
-      if (storedData) {
-        const userData = JSON.parse(storedData);
-        const kcalTarget = parseFloat(userData.kcalTarget);
-        const circle = document.getElementById("calorieCircle");
-        circle.innerHTML = `0 / ${kcalTarget} kcal`;
+      const userData = storedData ? JSON.parse(storedData) : {};
+      const kcalTarget = parseFloat(userData.kcalTarget || 0);
+
+      if (totalKcal === 0) {
+        text.textContent = `0 / ${kcalTarget} kcal`;
         circle.style.background = `conic-gradient(var(--primary) 0%, #ddd 0)`;
+        document.querySelector(".bar-fill.fat").style.width = "0%";
+        document.querySelector(".bar-fill.protein").style.width = "0%";
+        document.querySelector(".bar-fill.carbs").style.width = "0%";
+        document.querySelector(".bar-fill.sugar").style.width = "0%";
+        return;
       }
-      return;
-    }
 
-    const fatPercent = (kcalFromFat / totalKcal) * 100;
-    const proteinPercent = (kcalFromProtein / totalKcal) * 100;
-    const carbsPercent = (kcalFromCarbs / totalKcal) * 100;
-    const sugarPercent = (nutrients.sugar * 4 / totalKcal) * 100;
+      const fatPercent = (kcalFromFat / totalKcal) * 100;
+      const proteinPercent = (kcalFromProtein / totalKcal) * 100;
+      const carbsPercent = (kcalFromCarbs / totalKcal) * 100;
+      const sugarPercent = (nutrients.sugar * 4 / totalKcal) * 100;
 
-    document.querySelector(".bar-fill.fat").style.width = fatPercent + "%";
-    document.querySelector(".bar-fill.protein").style.width = proteinPercent + "%";
-    document.querySelector(".bar-fill.carbs").style.width = carbsPercent + "%";
-    document.querySelector(".bar-fill.sugar").style.width = sugarPercent + "%";
+      document.querySelector(".bar-fill.fat").style.width = fatPercent + "%";
+      document.querySelector(".bar-fill.protein").style.width = proteinPercent + "%";
+      document.querySelector(".bar-fill.carbs").style.width = carbsPercent + "%";
+      document.querySelector(".bar-fill.sugar").style.width = sugarPercent + "%";
 
-    const storedData = localStorage.getItem("userData");
-    if (storedData) {
-      const userData = JSON.parse(storedData);
-      const kcalTarget = parseFloat(userData.kcalTarget);
       const consumed = totalKcal;
       const percentage = (consumed / kcalTarget) * 100;
-      const circle = document.getElementById("calorieCircle");
-      circle.innerHTML = `${consumed} / ${kcalTarget} kcal`;
+      text.textContent = `${consumed} / ${kcalTarget} kcal`;
       circle.style.background = `conic-gradient(var(--primary) ${percentage}%, #ddd 0)`;
     }
-  }
 
-
-    // API Aufruf für aktuelle Daten der täglichen Nährwerte
     function loadNutrients() {
       fetch("/api/daily-summary")
-        .then(res => {
-          if (!res.ok) throw new Error("Fehler beim Abrufen der Tageswerte");
-          return res.json();
-        })
+        .then(res => res.ok ? res.json() : Promise.reject("Fehler beim Abrufen"))
         .then(data => updateBars(data))
         .catch(err => console.error("API-Fehler:", err));
     }
 
-    // Funktion für heute gegessen
     async function loadEatenList() {
-    const response = await fetch("/api/today-entries");
-    if (!response.ok) {
-      console.error("Fehler beim Laden der heutigen Einträge");
-      return;
-    }
+      const response = await fetch("/api/today-entries");
+      if (!response.ok) return console.error("Fehler beim Laden");
 
-    const entries = await response.json();
-    const list = document.getElementById("eatenList");
-    list.innerHTML = ""; // vorherige Einträge löschen
+      const entries = await response.json();
+      const list = document.getElementById("eatenList");
+      list.innerHTML = "";
 
       entries.forEach(entry => {
         const li = document.createElement("li");
@@ -345,23 +343,16 @@
 
     function removeItem(icon) {
       const li = icon.closest("li");
-      
-      const name = li.dataset.name;
-      const kcal = parseFloat(li.dataset.kcal);
-      const protein = parseFloat(li.dataset.protein);
-      const fat = parseFloat(li.dataset.fat);
-      const carbs = parseFloat(li.dataset.carbs);
-      const sugar = parseFloat(li.dataset.sugar);
-      // Optional: Mengen- oder Makronährwert-Infos aus versteckten Attributen mitgeben, falls nötig
+      const { name, kcal, protein, fat, carbs, sugar } = li.dataset;
 
       fetch("/api/daily-entry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, kcal, protein, fat, carbs, sugar }) // ggf. erweitern um weitere Werte
+        body: JSON.stringify({ name, kcal, protein, fat, carbs, sugar })
       })
         .then(res => {
           if (!res.ok) throw new Error("Löschen fehlgeschlagen");
-          li.remove(); // nur bei Erfolg im Backend visuell löschen
+          li.remove();
           loadNutrients();
           loadEatenList();
         })
@@ -371,12 +362,11 @@
         });
     }
 
-    // Beispiel: zeige Warnung wenn ein Nährwert überschritten ist
-    const showWarning = true; // ← später dynamisch anpassen
+    // Optional: Dynamische Anzeige der Warnung
+    const showWarning = true;
     if (showWarning) {
       document.getElementById('warningBox').style.display = 'block';
     }
-    
   </script>
 </body>
 </html>

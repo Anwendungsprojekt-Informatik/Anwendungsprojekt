@@ -6,8 +6,9 @@
   <title>Konto</title>
   <style>
     :root {
-      --primary: #4CAF50;
-      --bg: #f4f4f4;
+      --primary: #87CEFA;
+      --bg: #f0f8ff;
+      --text: #333;
     }
 
     * {
@@ -16,21 +17,25 @@
 
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background-color: var(--bg);
-      color: #333;
+      color: var(--text);
     }
 
     header {
+      position: relative;
       display: flex;
+      justify-content: center;
       align-items: center;
-      justify-content: space-between;
       padding: 1rem;
       background-color: var(--primary);
       color: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
     .menu-icon {
+      position: absolute;
+      left: 1rem;
       font-size: 1.5rem;
       cursor: pointer;
     }
@@ -41,7 +46,7 @@
       left: -70%;
       width: 70%;
       height: 100%;
-      background-color: #333;
+      background-color: #2a2a2a;
       color: white;
       padding: 2rem 1rem;
       transition: left 0.3s ease-in-out;
@@ -62,6 +67,12 @@
 
     .section {
       padding: 1.5rem;
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      margin-top: 2rem;
     }
 
     .user-icon {
@@ -78,14 +89,33 @@
       display: block;
       font-weight: bold;
       margin-bottom: 0.3rem;
+      color: #555;
     }
 
     input, select {
       width: 100%;
-      padding: 0.5rem;
+      padding: 0.6rem;
       font-size: 1rem;
-      border-radius: 5px;
+      border-radius: 8px;
       border: 1px solid #ccc;
+      transition: border-color 0.2s;
+    }
+
+    input[type="checkbox"] {
+      width: auto;
+      margin-right: 0.5rem;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      font-weight: normal;
     }
 
     .btn-row {
@@ -99,22 +129,31 @@
       padding: 0.7rem;
       font-size: 1rem;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
       color: white;
+      cursor: pointer;
+      transition: background 0.3s;
     }
 
     .btn-edit {
       background-color: #888;
     }
 
+    .btn-edit:hover {
+      background-color: #666;
+    }
+
     .btn-save {
       background-color: var(--primary);
+    }
+
+    .btn-save:hover {
+      background-color: #6bbdf4;
     }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
     <nav>
       <a href="/public/index.html">Home</a>
@@ -127,13 +166,11 @@
     </nav>
   </div>
 
-  <!-- Header -->
   <header>
     <span class="menu-icon" onclick="toggleMenu()">☰</span>
     <h2>Mein Konto</h2>
   </header>
 
-  <!-- Inhalt -->
   <div class="section">
     <div class="user-icon">👤</div>
 
@@ -182,6 +219,15 @@
       </select>
     </div>
 
+    <div class="field">
+      <label>Ernährungsweise</label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" id="protein" disabled> Proteinreich</label>
+        <label><input type="checkbox" id="lowSugar" disabled> Zuckerarm</label>
+        <label><input type="checkbox" id="lowFat" disabled> Fettarm</label>
+      </div>
+    </div>
+
     <div class="btn-row">
       <button class="btn-edit" onclick="toggleEdit()">✏️ Bearbeiten</button>
       <button class="btn-save" onclick="saveData()">💾 Speichern</button>
@@ -206,7 +252,12 @@
         height: document.getElementById("height").value,
         weight: document.getElementById("weight").value,
         kcalTarget: document.getElementById("kcalTarget").value,
-        dietType: document.getElementById("dietType").value
+        dietType: document.getElementById("dietType").value,
+        dietOptions: {
+          protein: document.getElementById("protein").checked,
+          lowSugar: document.getElementById("lowSugar").checked,
+          lowFat: document.getElementById("lowFat").checked
+        }
       };
       localStorage.setItem("userData", JSON.stringify(userData));
       alert("Daten gespeichert!");
@@ -215,7 +266,6 @@
     function loadData() {
       const data = JSON.parse(localStorage.getItem("userData") || "{}");
       if (!data) return;
-
       document.getElementById("name").value = data.name || "";
       document.getElementById("age").value = data.age || "";
       document.getElementById("gender").value = data.gender || "";
@@ -223,6 +273,11 @@
       document.getElementById("weight").value = data.weight || "";
       document.getElementById("kcalTarget").value = data.kcalTarget || "";
       document.getElementById("dietType").value = data.dietType || "";
+      if (data.dietOptions) {
+        document.getElementById("protein").checked = data.dietOptions.protein || false;
+        document.getElementById("lowSugar").checked = data.dietOptions.lowSugar || false;
+        document.getElementById("lowFat").checked = data.dietOptions.lowFat || false;
+      }
     }
 
     loadData();
